@@ -65,7 +65,7 @@
       
         <li class="list-item">
           
-            <a href="/" class="item-link active">Home</a>
+            <a href="/" class="item-link">Home</a>
           
         </li>
       
@@ -104,7 +104,7 @@
         
           <li class="menu-item">
             
-              <a href="/" class="menu-link mobile-active">Home</a>
+              <a href="/" class="menu-link">Home</a>
             
           </li>
         
@@ -137,54 +137,53 @@
   </div>
 </header>
 
-    <main class="app-body">
+    <div id="article-banner">
+  <h2>Archives</h2>
+  <p class="post-date">文章归档</p>
+</div>
+<main class="app-body" id="archives">
   
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/2020/03/31/读书-这就是搜索引擎-核心技术讲解/">[读书]这就是搜索引擎-核心技术讲解</a>
-      </h2>
-      <p class="article-date">2020年3月31日</p>
-      
-      <div class="article-summary">
-        
-          搜索引擎一直以来都是学习、查找资料的工具，是从海量网页查找有效信息的途径。搜索引擎的交互界面非常简单，通常只有一个搜索框，但背后涉及的技术却不简单。虽然一直都在使用搜索引擎，但是却从来没有仔细了解过背后的原理，对搜索引擎也没有整体的认识。由于即将从事搜索引擎相关的工作，遂通过这本书来扫盲。
- ...
-        
+  
+  
+    <section class="time-section">
+  <h1 class="section-year">
+    2020
+  </h1>
+  <div class="section-list">
+    
+    
+      <div class="section-list-item">
+        <a href="/2020/03/31/读书-这就是搜索引擎-核心技术讲解/" class="archive-title">[读书]这就是搜索引擎-核心技术讲解</a>
+        <p class="archive-date">03-31</p>
       </div>
-      <a class="more" href="/2020/03/31/读书-这就是搜索引擎-核心技术讲解/">Read more</a>
-    </article>
+    
+  </div>
+</section>
   
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/2019/09/22/文本领域的Tricks/">文本领域的Tricks</a>
-      </h2>
-      <p class="article-date">2019年9月22日</p>
-      
-        
-  <a href="/tags#文本预处理" >
-    <span class="tag-code">文本预处理</span>
-  </a>
-
-  <a href="/tags#数据增强" >
-    <span class="tag-code">数据增强</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          在图像领域，有不少数据增强的办法，用来对数据进行增强，比如图片旋转，图片的裁剪，随机噪声等。而在文本领域，同样有很多针对文本的预处理方法和数据增强的方法。这些方法在提高模型的泛化能力上起到很重要的作用，在各种比赛中也经常被使用到。
-文本预处理
-停用词过滤。无论中文还是英文，都可以进行停用词的 ...
-        
+    <section class="time-section">
+  <h1 class="section-year">
+    2019
+  </h1>
+  <div class="section-list">
+    
+    
+      <div class="section-list-item">
+        <a href="/2019/09/22/文本领域的Tricks/" class="archive-title">文本领域的Tricks</a>
+        <p class="archive-date">09-22</p>
       </div>
-      <a class="more" href="/2019/09/22/文本领域的Tricks/">Read more</a>
-    </article>
-  
-
+    
+  </div>
+</section>
   
 </main>
 
-
+<script>
+  (function () {
+    var url = 'https:xionghhcs.github.io/archives/2020/index.html';
+    $('#article-banner').geopattern(url);
+    $('.header').removeClass('fixed-header');
+  })();
+</script>
     <div class="scroll-top">
   <span class="arrow-icon"></span>
 </div>
