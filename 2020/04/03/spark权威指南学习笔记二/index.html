@@ -10,7 +10,7 @@
   
   <title>
     
-      spark权威指南学习笔记一 | 熊猫
+      spark权威指南学习笔记二 | 熊猫
     
   </title>
   <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
@@ -138,8 +138,8 @@
 </header>
 
     <div id="article-banner">
-  <h2>spark权威指南学习笔记一</h2>
-  <p class="post-date">2020-04-02</p>
+  <h2>spark权威指南学习笔记二</h2>
+  <p class="post-date">2020-04-03</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
@@ -147,25 +147,22 @@
 <main class="app-body flex-box">
   <!-- Article START -->
   <article class="post-article">
-    <section class="markdown-content"><h1 id="什么是Spark？"><a href="#什么是Spark？" class="headerlink" title="什么是Spark？"></a>什么是Spark？</h1><p>spark是一个分布式的内存计算引擎。由于在现在的环境下，单台计算机没有足够的计算资源进行大规模数据的计算，使得应用者能够在相对短的时间内获得计算的结果。spark的出现使得大规模数据计算可以在一群计算机之间展开，从而解决单台计算机计算资源不足的问题。spark是一个计算引擎，因此它主要关注的是如何在分布式的数据集上进行计算，而不关注数据如何进行分布式的存储。数据的分布式存储是HDFS这样的分布式存储系统管理的。</p>
-<h1 id="Spark应用程序的构成"><a href="#Spark应用程序的构成" class="headerlink" title="Spark应用程序的构成"></a>Spark应用程序的构成</h1><p>Spark应用程序由一个driver进程（驱动程序）和一组executor进程组成。驱动程序负责运行main函数；维护spark应用程序的信息；响应用户的输入；分析、分配和调度executor的工作。executor实际执行驱动程序分配给他们的代码并将执行器executor的计算状态报告给驱动节点。driver和executor都运行于集群中的某个节点中，由资源管理器进行节点分配。</p>
-<p><img src="/2020/04/02/spark权威指南学习笔记一/spark%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E6%9E%84%E6%88%90.png" alt="spark应用程序结构图"></p>
-<h1 id="Spark中两种类型的操作"><a href="#Spark中两种类型的操作" class="headerlink" title="Spark中两种类型的操作"></a>Spark中两种类型的操作</h1><p>spark的操作可以大致分为两种类型，一种是转换操作（transformation），另一种是行动操作（action）。转换操作构建数据的转换逻辑，即将数据从一种状态、格式转换为另一种状态、格式。行动操作则触发实际的计算，通过结合一系列的转换操作得到最终行动操作的结果。</p>
-<p>转换操作进一步可以概括为两种类型。一种是窄依赖，另一种是宽依赖。窄依赖操作的每个输入数据分区只对应一个数据输出分区，如下图：</p>
-<p><img src="/2020/04/02/spark权威指南学习笔记一/%E7%AA%84%E4%BE%9D%E8%B5%96.png" alt="窄依赖"></p>
-<p>宽依赖操作的一个输入数据分区对应多个输出数据分区，即一个分区需要从多个分区收集数据。下图右侧为输入数据分区，左侧为输出数据分区。</p>
-<p><img src="/2020/04/02/spark权威指南学习笔记一/%E5%AE%BD%E4%BE%9D%E8%B5%96.png" alt="宽依赖"></p>
-<p>窄依赖因为只是一个分区到另一个分区的操作，因此可以在单独的分区进行计算，它不需要与其他分区的数据产生联系，并行度高。而宽依赖的输入分区需要结合多个输出分区，计算过程中可能产生分区之间的通信和shuffle操作，并行度将会受到影响。</p>
-<h1 id="延迟计算"><a href="#延迟计算" class="headerlink" title="延迟计算"></a>延迟计算</h1><p>spark不会在遇到转换操作后立即计算，得到转换操作的结果，而是在实际需要计算得到结果时（例如遇到行动操作），才会将之前设计的各种转换操作转换为一个物理计划，并在集群中尽可能高效的运行。这种方法可以端到端的优化整个数据流。而如果是采用即时计算的策略，那么用户的每个操作都要在集群中开始计算，优化操作只能计算当前的数据状态，后面的操作计划就无法考虑到。</p>
-<h1 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h1><p>Spark UI是一个可视化界面，可以监控作业的进度。如何在单机和集群环境下启动和查看spark UI？</p>
-<p>DataFrame是spark提供的一个结构换数据结构和API。类似pandas中的dataframe。</p>
-<p>分区的概念。分区的概念目前还不是很清楚。</p>
-<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><ol>
-<li><p>《Spark - The Definitive Guide - Big data processing made simple》</p>
-</li>
-<li><p>spark权威指南翻译：<a href="https://zhuanlan.zhihu.com/p/82435914?utm_source=wechat_session" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/82435914?utm_source=wechat_session</a></p>
-</li>
-</ol>
+    <section class="markdown-content"><blockquote>
+<p>该部分总结自《Spark权威指南》第三章内容，个人学习笔记。</p>
+</blockquote>
+<h1 id="Spark工具集"><a href="#Spark工具集" class="headerlink" title="Spark工具集"></a>Spark工具集</h1><p>下图是Spark工具集的概览，包括了结构化的API、低级的API，结构化流、机器学习相关的MLlib进行高级数据分析、第三方库/包等。</p>
+<p><img src="/2020/04/03/spark权威指南学习笔记二/spark%E5%B7%A5%E5%85%B7%E9%9B%86.png" alt></p>
+<h1 id="提交上线应用环境"><a href="#提交上线应用环境" class="headerlink" title="提交上线应用环境"></a>提交上线应用环境</h1><p>我们可以在spark提供的交互性shell环境中进行交互式编程，但是这种仅适合于进行在线数据分析。当需要开发大型项目，显然这种交互式的编程方式不太方便。这时候需要我们打包自己的spark程序，然后使用spark提供的spark-submit工具提交到集群上运行。spark-submit在spark安装目录的bin目录下，其实本身是一个shell脚本，其内容如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">if [ -z &quot;$&#123;SPARK_HOME&#125;&quot; ]; then</span><br><span class="line">source &quot;$(dirname &quot;$0&quot;)&quot;/find-spark-home</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line"># disable randomized hash for string in Python 3.3+</span><br><span class="line">export PYTHONHASHSEED=0</span><br><span class="line"></span><br><span class="line">exec &quot;$&#123;SPARK_HOME&#125;&quot;/bin/spark-class org.apache.spark.deploy.SparkSubmit &quot;$@&quot;</span><br></pre></td></tr></table></figure>
+
+<p>在上面的脚本代码中可以看到SPARK_HOME这个环境变量，这个脚本需要依赖这个环境变量定位spark的安装位置。平时我们在安装各个框架、库的时候，都或多或少会碰到需要在系统环境变量中配置某些指定的变量，其中道理就在这里。环境变量的配置一方面是定位框架安装的路径，另一方面是框架中自行开发的一些工具脚本需要依赖这些环境变量来执行，本质依旧是告诉操作系统我将框架安装在了什么地方，让系统可以找得到相关的依赖或者命令。</p>
+<p>关于如何利用spark-submit如何提交程序，有哪些相关参数，每个参数具体什么含义在需要的时候再查询。</p>
+<h1 id="类型安全的API——DataSets"><a href="#类型安全的API——DataSets" class="headerlink" title="类型安全的API——DataSets"></a>类型安全的API——DataSets</h1><p>DataSets是Spark提供的结构化且类型安全的API，但是其仅能在Java和Scala中使用。什么是类型安全？目前对类型安全的API带来的优势还没有什么实际感受。</p>
+<h1 id="结构化流处理（Structured-Streaming）"><a href="#结构化流处理（Structured-Streaming）" class="headerlink" title="结构化流处理（Structured Streaming）"></a>结构化流处理（Structured Streaming）</h1><p>Spark提供了以批处理的方式处理结构化的数据，比如DataFrame结构和Spark SQL。而所谓的结构化流，其实就是使用流处理的方式来处理结构化数据。一个简单的例子是销售记录。一份消费记录记录的用户id，消费时间，消费金额等信息。批处理在每天结束时，一次性计算每天的消费统计信息。而流处理通过实践窗口，实时计算一些统计信息，比如一个小时内每个客户的消费金额等。批处理是静态的，需要等到每天结束时，数据都不变的情况下进行整体计算。流处理是动态的，数据在不停变化，因此流处理的计算结果也在根据数据的变化而变化。</p>
+<h1 id="机器学习和高级分析"><a href="#机器学习和高级分析" class="headerlink" title="机器学习和高级分析"></a>机器学习和高级分析</h1><p>Spark提供了MLlib库以支持机器学习应用的开发，MLlib库允许进行预处理、修改、模型训练和数据的大规模预测。因此，一些分类和回归算法现在可以借助该库在集群上进行实现。为什么不在单机上进行呢？这个在之前的介绍也已经提到过，spark是为了解决单机资源不足以支撑大数据计算而产生的计算引擎。我们平时习惯了在小规模数据上编写代码，一次性将所有数据读入内存并进行模型的训练，但是在实际生产应用中数据规模十分庞大，单机是不足以处理如此大规模数据的。MLlib则是在集群进行计算，解决单机资源不足的问题。</p>
+<h1 id="低层次APIs"><a href="#低层次APIs" class="headerlink" title="低层次APIs"></a>低层次APIs</h1><p>RDD（分布式数据集）是Spark中的一种低层次的API，它向用户揭示了spark的物理执行特性（比如分区）。一般建议使用DataFrame等高级的API，而在处理一些原始或者非结构化的数据时使用RDD。</p>
+<h1 id="Spark-R"><a href="#Spark-R" class="headerlink" title="Spark R"></a>Spark R</h1><p>Spark提供对R语言的支持，目前不关心。</p>
+<h1 id="Spark生态系统和软件包"><a href="#Spark生态系统和软件包" class="headerlink" title="Spark生态系统和软件包"></a>Spark生态系统和软件包</h1><p>Spark包可以在spark-packages.org中查看相关索引。第三方开发的包可以帮助我们快速开发，避免重复造轮子。在使用python的过程中，这一点是深有体会的。</p>
 </section>
     <!-- Tags START -->
     
@@ -184,20 +181,13 @@
   <div class="nav-container">
     <!-- reverse left and right to put prev and next in a more logic postition -->
     
-      <a class="nav-left" href="/2020/03/31/读书-这就是搜索引擎-核心技术讲解/">
+      <a class="nav-left" href="/2020/04/02/spark权威指南学习笔记一/">
         <span class="nav-arrow">← </span>
         
-          [读书]这就是搜索引擎-核心技术讲解
+          spark权威指南学习笔记一
         
       </a>
     
-    
-      <a class="nav-right" href="/2020/04/03/spark权威指南学习笔记二/">
-        
-          spark权威指南学习笔记二
-        
-        <span class="nav-arrow"> →</span>
-      </a>
     
   </div>
 
@@ -219,7 +209,7 @@
   <div class="toc-main">
     <strong class="toc-title">Catalog</strong>
     
-      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#什么是Spark？"><span class="toc-nav-text">什么是Spark？</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Spark应用程序的构成"><span class="toc-nav-text">Spark应用程序的构成</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Spark中两种类型的操作"><span class="toc-nav-text">Spark中两种类型的操作</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#延迟计算"><span class="toc-nav-text">延迟计算</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#其他"><span class="toc-nav-text">其他</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#参考资料"><span class="toc-nav-text">参考资料</span></a></li></ol>
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Spark工具集"><span class="toc-nav-text">Spark工具集</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#提交上线应用环境"><span class="toc-nav-text">提交上线应用环境</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#类型安全的API——DataSets"><span class="toc-nav-text">类型安全的API——DataSets</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#结构化流处理（Structured-Streaming）"><span class="toc-nav-text">结构化流处理（Structured Streaming）</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#机器学习和高级分析"><span class="toc-nav-text">机器学习和高级分析</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#低层次APIs"><span class="toc-nav-text">低层次APIs</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Spark-R"><span class="toc-nav-text">Spark R</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Spark生态系统和软件包"><span class="toc-nav-text">Spark生态系统和软件包</span></a></li></ol>
     
   </div>
 </aside>
@@ -229,7 +219,7 @@
 
 <script>
   (function () {
-    var url = 'https:xionghhcs.github.io/2020/04/02/spark权威指南学习笔记一/';
+    var url = 'https:xionghhcs.github.io/2020/04/03/spark权威指南学习笔记二/';
     var banner = ''
     if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
       $('#article-banner').css({
