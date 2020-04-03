@@ -525,6 +525,7 @@ h2.article-head {
 .markdown-content p,
 .article-summary p {
   line-height: 1.6em;
+  padding: 8px 0px;
 }
 .markdown-content p code,
 .article-summary p code {
@@ -571,7 +572,7 @@ h2.article-head {
 .markdown-content blockquote,
 .article-summary blockquote {
   margin: 1em 0;
-  padding: 15px 20px;
+  padding: 0 20px;
   border-left: 4px solid #42b983;
   background: #f8f8f8;
   border-bottom-right-radius: 2px;
