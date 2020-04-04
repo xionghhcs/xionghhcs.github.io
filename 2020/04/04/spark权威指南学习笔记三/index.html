@@ -10,7 +10,7 @@
   
   <title>
     
-      spark权威指南学习笔记二 | 熊猫
+      spark权威指南学习笔记三 | 熊猫
     
   </title>
   <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
@@ -152,8 +152,8 @@
 </header>
 
     <div id="article-banner">
-  <h2>spark权威指南学习笔记二</h2>
-  <p class="post-date">2020-04-03</p>
+  <h2>spark权威指南学习笔记三</h2>
+  <p class="post-date">2020-04-04</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
@@ -162,21 +162,21 @@
   <!-- Article START -->
   <article class="post-article">
     <section class="markdown-content"><blockquote>
-<p>该部分总结自《Spark权威指南》第三章内容，个人学习笔记。</p>
+<p>该部分总结自《Spark权威指南》第四章内容，个人学习笔记和记录。</p>
 </blockquote>
-<h1 id="Spark工具集"><a href="#Spark工具集" class="headerlink" title="Spark工具集"></a>Spark工具集</h1><p>下图是Spark工具集的概览，包括了结构化的API、低级的API，结构化流、机器学习相关的MLlib进行高级数据分析、第三方库/包等。</p>
-<p><img src="/2020/04/03/spark权威指南学习笔记二/spark%E5%B7%A5%E5%85%B7%E9%9B%86.png" alt></p>
-<h1 id="提交上线应用环境"><a href="#提交上线应用环境" class="headerlink" title="提交上线应用环境"></a>提交上线应用环境</h1><p>我们可以在spark提供的交互性shell环境中进行交互式编程，但是这种仅适合于进行在线数据分析。当需要开发大型项目，显然这种交互式的编程方式不太方便。这时候需要我们打包自己的spark程序，然后使用spark提供的spark-submit工具提交到集群上运行。spark-submit在spark安装目录的bin目录下，其实本身是一个shell脚本，其内容如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">if [ -z &quot;$&#123;SPARK_HOME&#125;&quot; ]; then</span><br><span class="line">source &quot;$(dirname &quot;$0&quot;)&quot;/find-spark-home</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line"># disable randomized hash for string in Python 3.3+</span><br><span class="line">export PYTHONHASHSEED=0</span><br><span class="line"></span><br><span class="line">exec &quot;$&#123;SPARK_HOME&#125;&quot;/bin/spark-class org.apache.spark.deploy.SparkSubmit &quot;$@&quot;</span><br></pre></td></tr></table></figure>
-
-<p>在上面的脚本代码中可以看到SPARK_HOME这个环境变量，这个脚本需要依赖这个环境变量定位spark的安装位置。平时我们在安装各个框架、库的时候，都或多或少会碰到需要在系统环境变量中配置某些指定的变量，其中道理就在这里。环境变量的配置一方面是定位框架安装的路径，另一方面是框架中自行开发的一些工具脚本需要依赖这些环境变量来执行，本质依旧是告诉操作系统我将框架安装在了什么地方，让系统可以找得到相关的依赖或者命令。</p>
-<p>关于如何利用spark-submit如何提交程序，有哪些相关参数，每个参数具体什么含义在需要的时候再查询。</p>
-<h1 id="类型安全的API——DataSets"><a href="#类型安全的API——DataSets" class="headerlink" title="类型安全的API——DataSets"></a>类型安全的API——DataSets</h1><p>DataSets是Spark提供的结构化且类型安全的API，但是其仅能在Java和Scala中使用。什么是类型安全？目前对类型安全的API带来的优势还没有什么实际感受。</p>
-<h1 id="结构化流处理（Structured-Streaming）"><a href="#结构化流处理（Structured-Streaming）" class="headerlink" title="结构化流处理（Structured Streaming）"></a>结构化流处理（Structured Streaming）</h1><p>Spark提供了以批处理的方式处理结构化的数据，比如DataFrame结构和Spark SQL。而所谓的结构化流，其实就是使用流处理的方式来处理结构化数据。一个简单的例子是销售记录。一份消费记录记录的用户id，消费时间，消费金额等信息。批处理在每天结束时，一次性计算每天的消费统计信息。而流处理通过实践窗口，实时计算一些统计信息，比如一个小时内每个客户的消费金额等。批处理是静态的，需要等到每天结束时，数据都不变的情况下进行整体计算。流处理是动态的，数据在不停变化，因此流处理的计算结果也在根据数据的变化而变化。</p>
-<h1 id="机器学习和高级分析"><a href="#机器学习和高级分析" class="headerlink" title="机器学习和高级分析"></a>机器学习和高级分析</h1><p>Spark提供了MLlib库以支持机器学习应用的开发，MLlib库允许进行预处理、修改、模型训练和数据的大规模预测。因此，一些分类和回归算法现在可以借助该库在集群上进行实现。为什么不在单机上进行呢？这个在之前的介绍也已经提到过，spark是为了解决单机资源不足以支撑大数据计算而产生的计算引擎。我们平时习惯了在小规模数据上编写代码，一次性将所有数据读入内存并进行模型的训练，但是在实际生产应用中数据规模十分庞大，单机是不足以处理如此大规模数据的。MLlib则是在集群进行计算，解决单机资源不足的问题。</p>
-<h1 id="低层次APIs"><a href="#低层次APIs" class="headerlink" title="低层次APIs"></a>低层次APIs</h1><p>RDD（分布式数据集）是Spark中的一种低层次的API，它向用户揭示了spark的物理执行特性（比如分区）。一般建议使用DataFrame等高级的API，而在处理一些原始或者非结构化的数据时使用RDD。</p>
-<h1 id="Spark-R"><a href="#Spark-R" class="headerlink" title="Spark R"></a>Spark R</h1><p>Spark提供对R语言的支持，目前不关心。</p>
-<h1 id="Spark生态系统和软件包"><a href="#Spark生态系统和软件包" class="headerlink" title="Spark生态系统和软件包"></a>Spark生态系统和软件包</h1><p>Spark包可以在spark-packages.org中查看相关索引。第三方开发的包可以帮助我们快速开发，避免重复造轮子。在使用python的过程中，这一点是深有体会的。</p>
+<h1 id="结构化API"><a href="#结构化API" class="headerlink" title="结构化API"></a>结构化API</h1><p>在前面的章节中已经有介绍结构化API，spark中的结构化集合主要有DataFrame和DataSet两种。他们的抽象逻辑就像excel表格一样，由行和列组成列表数据。</p>
+<h2 id="模式"><a href="#模式" class="headerlink" title="模式"></a>模式</h2><p>模式（Schemas）定义DataFrame的列名和类型。相当于模式定义了一张“表”是什么样的，一条记录有几列，每列是什么数据类型。</p>
+<h2 id="列"><a href="#列" class="headerlink" title="列"></a>列</h2><p>列（Column）表示简单类型、复杂类型或空值，由spark根据列信息，以便于对列进行转换。</p>
+<h2 id="行"><a href="#行" class="headerlink" title="行"></a>行</h2><p>行（Row）表示数据记录，DataFrame的每个数据记录都必须是Row类型的。</p>
+<h2 id="数据类型"><a href="#数据类型" class="headerlink" title="数据类型"></a>数据类型</h2><p>Spark有大量数据类型表示，比如ByteType、ShortType、LongType等，不同的数据类型占用内存大小不一样，可表示的数据范围和数据精度也不一样。</p>
+<h1 id="结构化API执行流程"><a href="#结构化API执行流程" class="headerlink" title="结构化API执行流程"></a>结构化API执行流程</h1><p>spark代码执行流程步骤如下：</p>
+<pre><code>1. 编写DataFrame、SQL、DataSets代码
+2. Spark进行代码检查并转化为逻辑计划
+3. Spark将逻辑计划转化为物理计划并进行优化
+4. Spark在集群中执行物理计划</code></pre><h2 id="逻辑计划"><a href="#逻辑计划" class="headerlink" title="逻辑计划"></a>逻辑计划</h2><p>获取用户代码并将其转化为逻辑结构，仅代表抽象转化（这里什么叫抽象转化），不涉及executor和driver。</p>
+<h2 id="物理计划"><a href="#物理计划" class="headerlink" title="物理计划"></a>物理计划</h2><p>通过生成不同的物理执行策略并通过成本模型进行比较来指定逻辑计划在集群上的执行方式，会导致一系列的RDD和转化。</p>
+<h2 id="执行"><a href="#执行" class="headerlink" title="执行"></a>执行</h2><p>Spark在RDD上运行代码，运行过程中生成优化的Java字节码，得到运行结果并返回给用户。</p>
+<h1 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h1><p>本章先绍了结构化API的一些基本要素，比如列、行、模式、spark内部类型等概念。接着介绍结构化API的执行流程。Spark执行流程经历用户代码–逻辑计划–物理计划–集群执行物理计划的过程，使得用户代码最终在集群机器中执行。但是在执行流程这部分看完依旧没有很清楚整个内部执行的流程，这部分仍旧需要配合其他资料继续了解。另外，这部分的执行流程是划分在结构化API章节下介绍的，那么这个执行流程是仅针对结构化API适用，还是对于其他类型的API，比如RDD，都适用？</p>
 </section>
     <!-- Tags START -->
     
@@ -195,20 +195,13 @@
   <div class="nav-container">
     <!-- reverse left and right to put prev and next in a more logic postition -->
     
-      <a class="nav-left" href="/2020/04/02/spark权威指南学习笔记一/">
+      <a class="nav-left" href="/2020/04/03/spark权威指南学习笔记二/">
         <span class="nav-arrow">← </span>
         
-          spark权威指南学习笔记一
+          spark权威指南学习笔记二
         
       </a>
     
-    
-      <a class="nav-right" href="/2020/04/04/spark权威指南学习笔记三/">
-        
-          spark权威指南学习笔记三
-        
-        <span class="nav-arrow"> →</span>
-      </a>
     
   </div>
 
@@ -232,7 +225,7 @@
   <div class="toc-main">
     <strong class="toc-title">Catalog</strong>
     
-      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Spark工具集"><span class="toc-nav-text">Spark工具集</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#提交上线应用环境"><span class="toc-nav-text">提交上线应用环境</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#类型安全的API——DataSets"><span class="toc-nav-text">类型安全的API——DataSets</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#结构化流处理（Structured-Streaming）"><span class="toc-nav-text">结构化流处理（Structured Streaming）</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#机器学习和高级分析"><span class="toc-nav-text">机器学习和高级分析</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#低层次APIs"><span class="toc-nav-text">低层次APIs</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Spark-R"><span class="toc-nav-text">Spark R</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Spark生态系统和软件包"><span class="toc-nav-text">Spark生态系统和软件包</span></a></li></ol>
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#结构化API"><span class="toc-nav-text">结构化API</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#模式"><span class="toc-nav-text">模式</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#列"><span class="toc-nav-text">列</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#行"><span class="toc-nav-text">行</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#数据类型"><span class="toc-nav-text">数据类型</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#结构化API执行流程"><span class="toc-nav-text">结构化API执行流程</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#逻辑计划"><span class="toc-nav-text">逻辑计划</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#物理计划"><span class="toc-nav-text">物理计划</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#执行"><span class="toc-nav-text">执行</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#最后"><span class="toc-nav-text">最后</span></a></li></ol>
     
   </div>
 </aside>
@@ -242,7 +235,7 @@
 
 <script>
   (function () {
-    var url = 'https:xionghhcs.github.io/2020/04/03/spark权威指南学习笔记二/';
+    var url = 'https:xionghhcs.github.io/2020/04/04/spark权威指南学习笔记三/';
     var banner = ''
     if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
       $('#article-banner').css({
@@ -297,7 +290,7 @@
     var gitmentConfig = "xionghhcs";
     if (gitmentConfig !== 'undefined') {
       var gitment = new Gitment({
-        id: "spark权威指南学习笔记二",
+        id: "spark权威指南学习笔记三",
         owner: "xionghhcs",
         repo: "xionghhcs.github.io",
         oauth: {
