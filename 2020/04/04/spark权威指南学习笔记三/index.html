@@ -18,14 +18,10 @@
   <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
   
-    <link rel="stylesheet" href="/css/plugins/gitment.css">
-  
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
   
-  
-    <script src="/js/gitment.js"></script>
   
   
   
@@ -220,9 +216,7 @@
     
     <!-- 二维码 END -->
     
-      <!-- Gitment START -->
-      <div id="comments"></div>
-      <!-- Gitment END -->
+      <!-- No Comment -->
     
   </article>
   <!-- Article END -->
@@ -292,34 +286,6 @@
 
 
 
-
-  <script>
-    var gitmentConfig = "xionghhcs";
-    if (gitmentConfig !== 'undefined') {
-      var gitment = new Gitment({
-        id: "spark权威指南学习笔记三",
-        owner: "xionghhcs",
-        repo: "xionghhcs.github.io",
-        oauth: {
-          client_id: "e8085631188ea0579bb9",
-          client_secret: "9a0a4651a707b7a5216f8c1c585f5233ef35d851"
-        },
-        theme: {
-          render(state, instance) {
-            const container = document.createElement('div')
-            container.lang = "en-US"
-            container.className = 'gitment-container gitment-root-container'
-            container.appendChild(instance.renderHeader(state, instance))
-            container.appendChild(instance.renderEditor(state, instance))
-            container.appendChild(instance.renderComments(state, instance))
-            container.appendChild(instance.renderFooter(state, instance))
-            return container;
-          }
-        }
-      })
-      gitment.render(document.getElementById('comments'))
-    }
-  </script>
 
 
 

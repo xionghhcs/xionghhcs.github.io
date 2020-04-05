@@ -18,14 +18,10 @@
   <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
   
-    <link rel="stylesheet" href="/css/plugins/gitment.css">
-  
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
   
-  
-    <script src="/js/gitment.js"></script>
   
   
   
@@ -176,7 +172,7 @@
 <p>通过DataFrame.columns可以访问一个DataFrame的所有列名。</p>
 <h1 id="记录和行"><a href="#记录和行" class="headerlink" title="记录和行"></a>记录和行</h1><p>之前有介绍过，DataFrame中的每行是一条记录，而记录表示为Row类型的对象。因此DataFrame可以看作是Row对象的集合。</p>
 <p>在python中，可以直接实例化Row对象来创建行，如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">from pyspark.sql import Row</span><br><span class="line"></span><br><span class="line">myRow = Row(xx,xx,xx)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">from pyspark.sql import Row</span><br><span class="line">myRow = Row(xx,xx,xx)</span><br></pre></td></tr></table></figure>
 
 <p>并通过下标来直接访问行中的元素</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">myRow[0]</span><br><span class="line">myRow[1]</span><br></pre></td></tr></table></figure>
@@ -242,6 +238,13 @@
       </a>
     
     
+      <a class="nav-right" href="/2020/04/05/spark权威指南学习笔记五/">
+        
+          spark权威指南学习笔记五
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
   </div>
 
     <!-- NAV END -->
@@ -252,9 +255,7 @@
     
     <!-- 二维码 END -->
     
-      <!-- Gitment START -->
-      <div id="comments"></div>
-      <!-- Gitment END -->
+      <!-- No Comment -->
     
   </article>
   <!-- Article END -->
@@ -324,34 +325,6 @@
 
 
 
-
-  <script>
-    var gitmentConfig = "xionghhcs";
-    if (gitmentConfig !== 'undefined') {
-      var gitment = new Gitment({
-        id: "spark权威指南学习笔记四",
-        owner: "xionghhcs",
-        repo: "xionghhcs.github.io",
-        oauth: {
-          client_id: "e8085631188ea0579bb9",
-          client_secret: "9a0a4651a707b7a5216f8c1c585f5233ef35d851"
-        },
-        theme: {
-          render(state, instance) {
-            const container = document.createElement('div')
-            container.lang = "en-US"
-            container.className = 'gitment-container gitment-root-container'
-            container.appendChild(instance.renderHeader(state, instance))
-            container.appendChild(instance.renderEditor(state, instance))
-            container.appendChild(instance.renderComments(state, instance))
-            container.appendChild(instance.renderFooter(state, instance))
-            return container;
-          }
-        }
-      })
-      gitment.render(document.getElementById('comments'))
-    }
-  </script>
 
 
 
