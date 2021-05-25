@@ -10,7 +10,7 @@
   
   <title>
     
-      spark权威指南学习笔记五 | 熊猫
+      A Proximity Probabilistic Model for Information Retrieval | 熊猫
     
   </title>
   <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
@@ -148,8 +148,8 @@
 </header>
 
     <div id="article-banner">
-  <h2>spark权威指南学习笔记五</h2>
-  <p class="post-date">2020-04-05</p>
+  <h2>A Proximity Probabilistic Model for Information Retrieval</h2>
+  <p class="post-date">2020-08-05</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
@@ -157,14 +157,23 @@
 <main class="app-body flex-box">
   <!-- Article START -->
   <article class="post-article">
-    <section class="markdown-content"></section>
+    <section class="markdown-content"><blockquote>
+<p>这篇文章是微软发布于2016年的一片文章，该文章提出了一种紧密度概率模型（PPM）以改进传统的BOW概率检索模型。从文章内容看，PPM模型主要是在BM25上做了改进，并且主要的改进点在于设计了结合query term的term frequency计算方法。</p>
+</blockquote>
+<h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>Term紧密度，主要用于衡量query中任意两个term之间的紧密程度，如果两个term间紧密度比较高，则这两个term在召回item中出现的距离越近相对来说越相关。以相邻的两个term为例，由于分词工具本身存在准确率问题，某两个term可能不会被分词工具切分到一起，但它们之间的关系比较紧密，也即紧密度比较高，如果在召回时能将在item中同时出现有这两个term且出现位置挨在一起或比较靠近的item进行召回，相关性会更好。</p>
+<p>以搜索query“下载深海大作战”为例，经分词工具可能切分成“下载 深海 大 作战”，但其实“大”和“作战”的紧密度很高，从文本相关性角度来看，召回“喵星大作战”app要一定程度比“大人物作战”会更相关。当然，在query中并不是两个term的距离越近紧密度越高，可以通过统计搜索log里term之间的共现概率来衡量他们的紧密程度。</p>
+<h1 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h1><h2 id="BM25"><a href="#BM25" class="headerlink" title="BM25"></a>BM25</h2><h2 id="PPM"><a href="#PPM" class="headerlink" title="PPM"></a>PPM</h2><h1 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h1><p>实验以TREC Terabyte tracks作为语料集，取title作为query。</p>
+<p><img src="/2020/08/05/A_Proximity_Probabilistic_Model_for_Information_Retrieval/1.png" alt></p>
+<p>从上面的实验可以看到相比于BM25的baseline，效果有不小的提升。然而有个疑问在于，在文章的background中提及了很多其他的工作也利用的term的紧密度来进行搜索排序，但是在实验中确又没有进行相关的比较。所以个人感觉实验部分不是很充分，因此具体的效果也没有很大的说服力。但是，作为引入term紧密度的方法，在工作中碰到时可以借鉴。</p>
+<h1 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h1><p>在以作者提出的计算词频的方法计算词频是，需要向前和向后遍历一个词的周围query词，时间复杂度是否会很高。另外，集合词的紧密度的方法是用在粗排阶段还是精排阶段？</p>
+</section>
     <!-- Tags START -->
     
       <div class="tags">
         <span>Tags:</span>
         
-  <a href="/tags#spark" >
-    <span class="tag-code">spark</span>
+  <a href="/tags#paper瞎读" >
+    <span class="tag-code">paper瞎读</span>
   </a>
 
       </div>
@@ -175,10 +184,10 @@
   <div class="nav-container">
     <!-- reverse left and right to put prev and next in a more logic postition -->
     
-      <a class="nav-left" href="/2020/04/04/spark权威指南学习笔记四/">
+      <a class="nav-left" href="/2020/06/13/费曼技巧/">
         <span class="nav-arrow">← </span>
         
-          spark权威指南学习笔记四
+          费曼技巧
         
       </a>
     
@@ -203,7 +212,7 @@
   <div class="toc-main">
     <strong class="toc-title">Catalog</strong>
     
-      <ol class="nav">none</ol>
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#背景"><span class="toc-nav-text">背景</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#方法"><span class="toc-nav-text">方法</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#BM25"><span class="toc-nav-text">BM25</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#PPM"><span class="toc-nav-text">PPM</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#实验"><span class="toc-nav-text">实验</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#思考"><span class="toc-nav-text">思考</span></a></li></ol>
     
   </div>
 </aside>
@@ -213,7 +222,7 @@
 
 <script>
   (function () {
-    var url = 'https:xionghhcs.github.io/2020/04/05/spark权威指南学习笔记五/';
+    var url = 'https:xionghhcs.github.io/2020/08/05/A_Proximity_Probabilistic_Model_for_Information_Retrieval/';
     var banner = ''
     if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
       $('#article-banner').css({
@@ -272,7 +281,7 @@
 </div>
     <footer class="app-footer">
   <p class="copyright">
-    &copy; 2020 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    &copy; 2021 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
     <br>
     Theme by <a href="https://github.com/yanm1ng">yanm1ng</a>
   </p>
