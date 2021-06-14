@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html>
+  <head><meta name="generator" content="Hexo 3.9.0">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="不知道的博客">
+  <meta name="keyword" content="自然语言处理, 搜索">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      Synthesizer：transformer中的自注意力机制是否真的有必要？ | 不知道
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-116276311-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'UA-116276311-1');
+    </script>
+
+</head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png">
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>不知道</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>Synthesizer：transformer中的自注意力机制是否真的有必要？</h2>
+  <p class="post-date">2021-05-26</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><blockquote>
+<p>Synthesizer模型是谷歌针对Transformer中的self-attention的进一步思考。毋庸置疑，Transformer模型无论是在NLP领域还是在CV领域都取得了巨大的成功，它抛弃了CNN、RNN这类常用的特征抽取模块，采用了self-attention机制来进行特征抽取，取得了很好的效果。但是在这篇文章中，作者提出了质疑：自注意力机制是否是必要的？作者通过大量实验得到了两个结论：（1）一个随机的注意力矩阵可以得到和Transformer接近的结果；（2）通过token之间的交互学习注意力矩阵是有用的，但不是那么重要。</p>
+</blockquote>
+<h1 id="回顾self-attention"><a href="#回顾self-attention" class="headerlink" title="回顾self-attention"></a>回顾self-attention</h1><p>既然是对self-attention的进一步探索，那么有必要回顾一下Transformer中的self-attention。下图是论文《Attention is All You need》中多头注意力机制的图示。</p>
+<p><img src="/2021/05/26/Synthesizer：transformer中的自注意力机制是否真的有必要？/scale-dot-product-attention.png" alt></p>
+<p>Scaled Dot-Product Attention的计算方法公式为：</p>
+<p>$$<br>Attention(Q,K,V) = softmax(\frac{QK^T}{\sqrt{d_k}})V<br>$$</p>
+<p>对于输入$X \in R^{n \times d}$，$Q,K,V$分别是经过不同的参数矩阵进行线性映射得到的，即$Q=W^Q X,K=W^K X, V=W^V X$。而对于多头注意力机制而言，则是将这个Attention多计算几次，然后将每个head的输出concat起来，从而得到多头注意力的输出。</p>
+<h1 id="Synthesizer模型"><a href="#Synthesizer模型" class="headerlink" title="Synthesizer模型"></a>Synthesizer模型</h1><p>下图给出了Synthesizer模型与Transformer模型的差异比较，可以看到，Synthesizer相比于Transformer，其主要的不同之处在于Synthesizer没有通过token-token两两计算的方式获得Attention矩阵，而是用其他的结构或者方法来获得这个矩阵。</p>
+<p><img src="/2021/05/26/Synthesizer：transformer中的自注意力机制是否真的有必要？/synthesizer_model.png" alt></p>
+<h2 id="Dense-Synthesizer"><a href="#Dense-Synthesizer" class="headerlink" title="Dense Synthesizer"></a>Dense Synthesizer</h2><p>假设Synthesizer的一个bolck以$X \in R^{N \times d}$为输入，并且输出$Y \in R^{N \times d}$，其中$N$是token个数，$d$是特征维度。与Transformer一样，为了方便block的堆叠，输入和输出的维度是一样的。</p>
+<p>首先用一个参数化的函数来获得注意力权重，该函数将输入的一个token从d维映射到了N维。这样把N个token并排，就可以得到一个$N \times N$的权重矩阵了。</p>
+<p>$$B_i = F(X_i)$$</p>
+<p>这里将原论文中不影响理解的标记$h,l$去掉了，原论文中$h$表示多头注意力的头，$l$表示层。这个公式是position-wise地应用于每个token，这意味着每个token将共享$F$的参数。作者采用了两层前向网络来表示函数$F$。</p>
+<p>$$F = W_2(RELU(W_1(X_i)))$$</p>
+<p>其中$W_1 \in R^{d \times d}$，$W_2 \in R^{d \times N}$。通过F后，可以得到$B \in R^{N \times N}$，这样Y的计算可以通过以下公式得到：</p>
+<p>$$Y = softmax(B)G(X)$$</p>
+<p>其中G是关于X的另一个参数化的函数，对应于标准Transformer中的V。这里提到的参数化函数F，也就是替换了标准Transformer中的dot-product attention的结构。</p>
+<h2 id="Random-Synthesizer"><a href="#Random-Synthesizer" class="headerlink" title="Random Synthesizer"></a>Random Synthesizer</h2><p>在上面的Dense Synthesizer方法中，模型通过全连接层，针对每个token计算特征的重要度，将d维的特征映射到了N维，最后将每个token组合从而获得注意力权重矩阵。另一个更极端的想法是，直接随机初始化注意力权重矩阵，这样注意力权重矩阵和输入的token就没有直接的联系了。这也是Random的由来。</p>
+<h1 id="模型分解"><a href="#模型分解" class="headerlink" title="模型分解"></a>模型分解</h1><p>在上面提到的两种模型中，Dense Synthesizer在网络中增加了$d \times N$个参数，而Random Synthesizer在网络中增加了$N \times N$个参数。为了进一步降低模型的参数，同时也为了防止模型的过拟合，作者提出了三种模型分解的方法。</p>
+<h2 id="Factorized-Dense-Synthesizer"><a href="#Factorized-Dense-Synthesizer" class="headerlink" title="Factorized Dense Synthesizer"></a>Factorized Dense Synthesizer</h2><p>对于Dense Synthesizer模型的分解可以用如下公式表示，依旧省略掉原论文中不影响理解的$h,l$下标：</p>
+<p>$$<br>A_i,B_i = F_A(X_i), F_B(X_i)<br>$$</p>
+<p>$F_A$将输入$X_i$，而$F_B$将输入$X_i$映射成b维向量，并且$a \times b=N$。s所以，$A_i \in R^a, B_i \in R^b$。又因为$F_A,F_B$都是position-wise地应用于每个token，所以得到的$A \in R^{N \times a},B \in R^{N \times b}$。原来的输出可以改写为：</p>
+<p>$$<br>Y = softmax(C)G(X)<br>$$</p>
+<p>$$<br>C = H_A(A) * H_B(B)<br>$$</p>
+<p>这里的$C$就是注意力权重矩阵。函数$H_*$是简单的将一个向量重复k次，比如一个a维向量，重复k次后，变成一个$a \times k$维的向量。在这里，$H_A$将一个a维向量映射成一个$a \times b$维向量, 而$H_B$将一个b维的向量映射成一个$a \times b$维的向量。又因为$a \times b = N$的前提条件，所以可以得到$H_A(A) \in R^{N \times N}, H_B(B) \in R^{N \times N}$，最后将两者进行element-wise乘得到注意力权重矩阵。</p>
+<h2 id="Factorized-Random-Synthesizer"><a href="#Factorized-Random-Synthesizer" class="headerlink" title="Factorized Random Synthesizer"></a>Factorized Random Synthesizer</h2><p>由于Random Synthesizer直接随机化了一个权重注意力矩阵，该矩阵是$R^{N \times N}$的。作者直接通过两个低秩矩阵$R_1, R_2 \in R^{N \times k}$来表示该注意力矩阵，从而达到减少参数量的目的。</p>
+<p>$$<br>Y = softmax(R_1R_2^T)G(X)<br>$$</p>
+<p>在这里参数两从$N^2$下降到了$2*Nk$，并且$k \ll N$。作者给的参考值$k=8$。</p>
+<h2 id="混合模式"><a href="#混合模式" class="headerlink" title="混合模式"></a>混合模式</h2><p>混合模式可以以不同的权重将各种Synthesizer设计都结合起来。</p>
+<p>$$<br>Y = softmax(\alpha_1 S_1(X) + \alpha_2 S_2(X) + \cdots + \alpha_n S_n(X))G(X)<br>$$</p>
+<p>$\alpha$是可学习的参数，并且$\sum{\alpha_*} = 1$。</p>
+<h1 id="Synthesizer实验结果"><a href="#Synthesizer实验结果" class="headerlink" title="Synthesizer实验结果"></a>Synthesizer实验结果</h1><p>实验方面，作者在机器翻译、自回归语言建模和GLUE/SuperGLUE上进行了实验。</p>
+<h2 id="机器翻译"><a href="#机器翻译" class="headerlink" title="机器翻译"></a>机器翻译</h2><p><img src="/2021/05/26/Synthesizer：transformer中的自注意力机制是否真的有必要？/mt.png" alt></p>
+<p>在上图的机器翻译实验结果中，一个Random模式的Synthesizer竟然就可以达到和Transformer接近的结果，并且在EnFr任务中获得了比标准注意力机制更好的效果。如果采用Random模式和标准注意力机制的混合，则在Random模式上取得了更进一步的效果提升。</p>
+<h2 id="文本生成"><a href="#文本生成" class="headerlink" title="文本生成"></a>文本生成</h2><p><img src="/2021/05/26/Synthesizer：transformer中的自注意力机制是否真的有必要？/abstraction_generation.png" alt></p>
+<p>文本生成和摘要方面，无论是Dense还是Random模式的Synthesizer，效果都差于标准的Transformer。而在对话生成方面，Dense模式的Synthesizer效果竟比Transformer还好。</p>
+<h2 id="CLUE-SuperCLUE"><a href="#CLUE-SuperCLUE" class="headerlink" title="CLUE/SuperCLUE"></a>CLUE/SuperCLUE</h2><p><img src="/2021/05/26/Synthesizer：transformer中的自注意力机制是否真的有必要？/clue_superclue.png" alt></p>
+<p>CLUE/SuperCLUE主要用于评估模型预训练+FineTune的效果。在这部分实验中，Random（R）和Dense(D)模式下的Synthesizer模型表现都没有太好，效果相比于T5有较大的差距。另一方面，如果将Random和标准Transformer进行混合，在大部分任务上都可以获得优于Transformer的效果。</p>
+<h1 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h1><p>通过实验可以看到，Random和Dense模式的Synthesizer模型在不少任务中都可以取得不错的结果，有的任务甚至直接超越了标准Transformer的结果。那么，Transformer取得的成功，是因为self-attention的结构，还是因为其庞大的参数呢？另一方面，从CLUE/SuperCLUE实验结果可以看到，Synthesizer模型在迁移学习上的效果并不是很好。</p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#NLP" >
+    <span class="tag-code">NLP</span>
+  </a>
+
+  <a href="/tags#Transformer" >
+    <span class="tag-code">Transformer</span>
+  </a>
+
+  <a href="/tags#自注意力机制" >
+    <span class="tag-code">自注意力机制</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2020/04/04/spark权威指南学习笔记四/">
+        <span class="nav-arrow">← </span>
+        
+          spark权威指南学习笔记四
+        
+      </a>
+    
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- No Comment -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#回顾self-attention"><span class="toc-nav-text">回顾self-attention</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Synthesizer模型"><span class="toc-nav-text">Synthesizer模型</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Dense-Synthesizer"><span class="toc-nav-text">Dense Synthesizer</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Random-Synthesizer"><span class="toc-nav-text">Random Synthesizer</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#模型分解"><span class="toc-nav-text">模型分解</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Factorized-Dense-Synthesizer"><span class="toc-nav-text">Factorized Dense Synthesizer</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Factorized-Random-Synthesizer"><span class="toc-nav-text">Factorized Random Synthesizer</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#混合模式"><span class="toc-nav-text">混合模式</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Synthesizer实验结果"><span class="toc-nav-text">Synthesizer实验结果</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#机器翻译"><span class="toc-nav-text">机器翻译</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#文本生成"><span class="toc-nav-text">文本生成</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#CLUE-SuperCLUE"><span class="toc-nav-text">CLUE/SuperCLUE</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#最后"><span class="toc-nav-text">最后</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'https:xionghhcs.github.io/2021/05/26/Synthesizer：transformer中的自注意力机制是否真的有必要？/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2021 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng">yanm1ng</a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+<script src="/js/script.js"></script>
+  </body>
+</html>
