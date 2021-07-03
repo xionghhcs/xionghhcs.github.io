@@ -172,9 +172,9 @@
 <p>$$B_i = F(X_i)$$</p>
 <p>这里将原论文中不影响理解的标记$h,l$去掉了，原论文中$h$表示多头注意力的头，$l$表示层。这个公式是position-wise地应用于每个token，这意味着每个token将共享$F$的参数。作者采用了两层前向网络来表示函数$F$。</p>
 <p>$$F = W_2(RELU(W_1(X_i)))$$</p>
-<p>其中$W_1 \in R^{d \times d}$，$W_2 \in R^{d \times N}$。通过F后，可以得到$B \in R^{N \times N}$，这样Y的计算可以通过以下公式得到：</p>
+<p>其中$W_1 \in R^{d \times d}$，$W_2 \in R^{d \times N}$。通过$F$后，可以得到$B \in R^{N \times N}$，这样$Y$的计算可以通过以下公式得到：</p>
 <p>$$Y = softmax(B)G(X)$$</p>
-<p>其中G是关于X的另一个参数化的函数，对应于标准Transformer中的V。这里提到的参数化函数F，也就是替换了标准Transformer中的dot-product attention的结构。</p>
+<p>其中$G$是关于$X$的另一个参数化的函数，对应于标准Transformer中的V。这里提到的参数化函数F，也就是替换了标准Transformer中的dot-product attention的结构。</p>
 <h2 id="Random-Synthesizer"><a href="#Random-Synthesizer" class="headerlink" title="Random Synthesizer"></a>Random Synthesizer</h2><p>在上面的Dense Synthesizer方法中，模型通过全连接层，针对每个token计算特征的重要度，将d维的特征映射到了N维，最后将每个token组合从而获得注意力权重矩阵。另一个更极端的想法是，直接随机初始化注意力权重矩阵，这样注意力权重矩阵和输入的token就没有直接的联系了。这也是Random的由来。</p>
 <h1 id="模型分解"><a href="#模型分解" class="headerlink" title="模型分解"></a>模型分解</h1><p>在上面提到的两种模型中，Dense Synthesizer在网络中增加了$d \times N$个参数，而Random Synthesizer在网络中增加了$N \times N$个参数。为了进一步降低模型的参数，同时也为了防止模型的过拟合，作者提出了三种模型分解的方法。</p>
 <h2 id="Factorized-Dense-Synthesizer"><a href="#Factorized-Dense-Synthesizer" class="headerlink" title="Factorized Dense Synthesizer"></a>Factorized Dense Synthesizer</h2><p>对于Dense Synthesizer模型的分解可以用如下公式表示，依旧省略掉原论文中不影响理解的$h,l$下标：</p>
@@ -196,7 +196,7 @@
 <p>文本生成和摘要方面，无论是Dense还是Random模式的Synthesizer，效果都差于标准的Transformer。而在对话生成方面，Dense模式的Synthesizer效果竟比Transformer还好。</p>
 <h2 id="CLUE-SuperCLUE"><a href="#CLUE-SuperCLUE" class="headerlink" title="CLUE/SuperCLUE"></a>CLUE/SuperCLUE</h2><p><img src="/2021/05/26/Synthesizer：transformer中的自注意力机制是否真的有必要？/clue_superclue.png" alt></p>
 <p>CLUE/SuperCLUE主要用于评估模型预训练+FineTune的效果。在这部分实验中，Random（R）和Dense(D)模式下的Synthesizer模型表现都没有太好，效果相比于T5有较大的差距。另一方面，如果将Random和标准Transformer进行混合，在大部分任务上都可以获得优于Transformer的效果。</p>
-<h1 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h1><p>通过实验可以看到，Random和Dense模式的Synthesizer模型在不少任务中都可以取得不错的结果，有的任务甚至直接超越了标准Transformer的结果。那么，Transformer取得的成功，是因为self-attention的结构，还是因为其庞大的参数呢？另一方面，从CLUE/SuperCLUE实验结果可以看到，Synthesizer模型在迁移学习上的效果并不是很好。</p>
+<h1 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h1><p>通过实验可以看到，Random和Dense模式的Synthesizer模型在不少任务中都可以取得不错的结果，有的任务甚至直接超越了标准Transformer的结果。那么，Transformer取得的成功，是因为self-attention的结构，还是因为其庞大的参数呢？另一方面，从CLUE/SuperCLUE实验结果可以看到，Synthesizer模型在迁移学习上的效果并不是很好，这也说明，通过两两token进行交互的self-attention的结构是有必要的，因为这种结构在迁移学习方面可以获得更好的结果。</p>
 </section>
     <!-- Tags START -->
     
@@ -230,6 +230,13 @@
         
       </a>
     
+    
+      <a class="nav-right" href="/2021/06/15/Luna-Linear-Unified-Nested-Attention/">
+        
+          Luna(Linear Unified Nested Attention)
+        
+        <span class="nav-arrow"> →</span>
+      </a>
     
   </div>
 

@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html>
+  <head><meta name="generator" content="Hexo 3.9.0">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="不知道的博客">
+  <meta name="keyword" content="自然语言处理, 搜索">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      Luna(Linear Unified Nested Attention) | 不知道
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-116276311-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'UA-116276311-1');
+    </script>
+
+</head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png">
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>不知道</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>Luna(Linear Unified Nested Attention)</h2>
+  <p class="post-date">2021-06-15</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><blockquote>
+<p>Transformer的时间和空间复杂度都是和输入句子长度的平方，这种平方的时间、空间复杂度使得Transformer难以建模很长的序列。因此Transformer发布之后，很多研究者研究如何降低Attention中的复杂度，在不影响效果的前提下，使得Attention在时间和空间复杂度上达到线性的。Luna也是线性化Attention的尝试。Luna主要在Transformer基础上做了两点改变，将标准Attention实现线性化：（1）增加一个额外的固定长度为$l$的输入序列lP；（2）使用两个Attention，分别是Pack Attention和Unpack Attention，一个用来将长度为$n$的输入序列X压缩成固定长度的序列，另一个则是用来将这个固定长度的序列解压缩成原来长度的序列。通过这两点时间复杂度从原来的$O(N^2)$降低到了$O(ln)$。由于l是一个超参数，因此时间复杂度是线性的。</p>
+</blockquote>
+<h1 id="回顾Transformer"><a href="#回顾Transformer" class="headerlink" title="回顾Transformer"></a>回顾Transformer</h1><p>传统的Attention机制可以用如下的公式表示：</p>
+<p>$$<br>Y = Attn(X, C) = \omega( \frac{XW_Q(CW_K)^T} {\sqrt{d}} )CW_V<br>$$</p>
+<p>注意力函数Attn输入两个序列$X \in R^{n \times d}$ 和 $C \in R^{m \times d} $，输出序列$Y \in R^{n \times d}$。其中的$n,m$表示序列长度，$d$表示特征维度。$W_q, W_k, W_v \in R^{d \times d}$是三个可学习的网络参数，用于将两个输入序列映射成Query，Key，Value：$Q=XW_Q,K=CW_K,V=CW_V$。$\omega$是激活函数，通常是$softmax$。公式计算出来的矩阵$A = \omega( \frac{XW_Q(CW_K)^T} {\sqrt{d}} ) \in R^{m \times n}$即常说的注意力矩阵，用来表示输入序列$X$和$C$中任意两个token之间的对齐分数。</p>
+<p>Attention是Transformer模型的重要组成部分，除此之外还有position wise feed-forward network(FFN)和layer normalization。有了这三个组件，Transformer的层的定义即可用如下公式表示：</p>
+<p>$$<br>X_A = LayerNorm(Atten(X, C) + X)<br>$$</p>
+<p>$$<br>X^{\prime} = LayerNorm(FFA(X_A) + X_A)<br>$$</p>
+<h1 id="Linear-Unified-Nested-Attention-Luna"><a href="#Linear-Unified-Nested-Attention-Luna" class="headerlink" title="Linear Unified Nested Attention (Luna)"></a>Linear Unified Nested Attention (Luna)</h1><p>Luna的层与标准Transformer的层区别如下图。整体来看，Luna相比于Transformer多了一条“边路”，用于对额外的输入序列$P \in R^{l \times d}$进行学习。其次，Luna Attention由两个Attention组成，并且这两个Attention存在交叉，这两个Attention就是Pack Attention和Unpack Attention。</p>
+<p><img src="/2021/06/15/Luna-Linear-Unified-Nested-Attention/luna_model.png" alt="Luna与Transformer的比较"></p>
+<p>Pack Attention将输入序列$X \in R^{n \times d}$压缩成长度为$l$的序列$Y_P \in R^{l \times d}$:</p>
+<p>$$<br>Y_P = Attn(P,C)<br>$$</p>
+<p>Unpack Attention则将$Y_P$解压缩成原始长度的序列:</p>
+<p>$$<br>Y_X = Attn(X, Y_P)<br>$$</p>
+<p>最终，Luna中使用的Attentiion可以表示为：</p>
+<p>$$<br>Y_X,Y_P = LunaAttn(X,P,C)<br>$$</p>
+<p>类似Transformer层的定义，将LunaAttn和FFN，LayerNorm结合起来，可以得到Luna层的定义：</p>
+<p>$$<br>Y_X,Y_P = LunaAttn(X,P,C)<br>$$</p>
+<p>$$<br>X_A,P_A = LayerNorm(Y_X + X),LayerNorm(Y_P + P)<br>$$</p>
+<p>$$<br>X^{\prime}, P^{\prime} = LayerNorm(FFN(X_A) + X_A), P_A<br>$$</p>
+<p>到这里，Luna层的定义已经介绍完了。</p>
+<h1 id="Luna-Causal-Attention"><a href="#Luna-Causal-Attention" class="headerlink" title="Luna Causal Attention"></a>Luna Causal Attention</h1><p>这里不知道如何翻译Causal Attention这个名词。不过Causal Attention要做的事情很简单：为了能够支持自回归解码，注意力机制在计算时应该只利用当前token以及当前token以前的token的信息，而不应该利用当前token之后的信息，因为在解码当前token时，未来的token是什么还是未知的。</p>
+<p>由于Luna Attention使用Pack Attention将输入序列压缩成了另一个长度更短的序列，因此不能像标准的self-attention一样直接mask掉之后的token。 </p>
+<p>为了设计这样一个causal attention，作者首先假设了$P$不包含$X$的信息，并且定义了causal函数$f: R^{n \times d_1} \times R^{n \times d_1} \times R^{n \times d_2} \rightarrow R^{n \times d_2}$:</p>
+<p>$$<br>F \triangleq f(X,Y,Z), where F_t = \frac{1}{t}X_t\sum_{t=1}^tY_j^TZ_j<br>$$</p>
+<p>$F \in R^{n \times d_2}$，并且$F_t$表示矩阵$F$的第t行。从$F$的定义可以看到，矩阵$F$的第t行表示了输入$X,Y,Z$第t行以及第t行以前的token的信息。</p>
+<p>有了上面的定义，可以通过如下的步骤实现causal attention。首先计算pack attention：$A_pack=\omega(\frac{PX^T}{\sqrt{d}})$(省略了$W_Q,W_K,W_V$)。在计算$A_pack$时，激活函数$\omega$不能使用softmax，因为这样在计算某个token时会使用这个token后续token的信息。因此作者借鉴了Linear Transformer的做法，将激活函数定义为$\omega(\cdot)=elu(\cdot)+1$。接着使用causal函数计算unpack attention:$A_unpack=f(X,X,A_pack^T)$，这里的激活函数可以使用softmax，因为这里的softmax是针对l进行的，而不是针对n进行的。最终的输出Y可以表示为：$Y=f(A_unpack, A_pack^T, X)$。</p>
+<h1 id="实验结果"><a href="#实验结果" class="headerlink" title="实验结果"></a>实验结果</h1><p>这里简单看看实验结果。主要关注长文本序列建模能力，时间消耗和模型在自然语言理解任务上的效果。</p>
+<h2 id="长文本序列建模"><a href="#长文本序列建模" class="headerlink" title="长文本序列建模"></a>长文本序列建模</h2><p>长文本序列建模在标准数据集LRA上进行。从实验效果上看，所有任务都取得了比Transformer好的效果，平均准确率也超过了所有比较的模型。</p>
+<p><img src="/2021/06/15/Luna-Linear-Unified-Nested-Attention/lra_result.png" alt="长文本建模结果比较"></p>
+<p>内存方面，各种不同长度输入序列消耗的内存相比于Transformer的比例如下图所示。Luna-16相比于其他比较模型取得了最好的效果，占用内存最小。但是Luna-256没有太大优势。这里的实验比较个人认为有些问题，在进行内存占用比较时，作者用Luna-16来进行比较，但是由于Luna-16参数量小，效果上并不是最好的。因此，Luna并没有做到内降低内存的同时，还保证效果。当Luna模型的参数量上来的时候，内存占用并没有太大的优势。</p>
+<p><img src="/2021/06/15/Luna-Linear-Unified-Nested-Attention/lra_speed_result.png" alt="长文本建模速度比较"></p>
+<h2 id="预训练"><a href="#预训练" class="headerlink" title="预训练"></a>预训练</h2><p>预训练任务是先在大规模预料上进行预训练，然后在各种下游任务上进行微调。这部分实验在GLUE和QA任务上进行。</p>
+<p>从实验结果可以看到，Luna和其他模型相比，效果上并没有太大差别。当然了，出来Linformer外，其他使用的都是标准softmax，而Luna则是使用了线性化的Attention。Luna能够做到在节省时间和空间的前提下效果不降就已经是“好”的效果了。</p>
+<p><img src="/2021/06/15/Luna-Linear-Unified-Nested-Attention/nlu_result.png" alt="自然语言理解任务效果"></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>Luna是线性化Attention的尝试，通过嵌套的两个attention来达到线性化的目的。这里线性化的实现是因为多了一个额外输入$P$，其序列长度$l$是预先定义的，因此时间和空间复杂度可以降到$O(ln)$。但是，当输入序列长度$n$很长是，$l$设定为一个合理的值，模型才能得到较好的效果，因此本质上$l$还是一个和$n$相关的参数。所以，这里是否真的做到了线性化的时间和空间，还有待商榷。</p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#Transformer" >
+    <span class="tag-code">Transformer</span>
+  </a>
+
+  <a href="/tags#Attention" >
+    <span class="tag-code">Attention</span>
+  </a>
+
+  <a href="/tags#线性Attention" >
+    <span class="tag-code">线性Attention</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2021/05/26/Synthesizer：transformer中的自注意力机制是否真的有必要？/">
+        <span class="nav-arrow">← </span>
+        
+          Synthesizer：transformer中的自注意力机制是否真的有必要？
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2021/06/27/入坑vim（一）/">
+        
+          入坑vim（一）
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- No Comment -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#回顾Transformer"><span class="toc-nav-text">回顾Transformer</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Linear-Unified-Nested-Attention-Luna"><span class="toc-nav-text">Linear Unified Nested Attention (Luna)</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Luna-Causal-Attention"><span class="toc-nav-text">Luna Causal Attention</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#实验结果"><span class="toc-nav-text">实验结果</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#长文本序列建模"><span class="toc-nav-text">长文本序列建模</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#预训练"><span class="toc-nav-text">预训练</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#总结"><span class="toc-nav-text">总结</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'https:xionghhcs.github.io/2021/06/15/Luna-Linear-Unified-Nested-Attention/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2021 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng">yanm1ng</a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+<script src="/js/script.js"></script>
+  </body>
+</html>
