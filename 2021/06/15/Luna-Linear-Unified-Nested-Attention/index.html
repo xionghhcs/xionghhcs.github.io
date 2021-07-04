@@ -184,7 +184,7 @@
 <p>为了设计这样一个causal attention，作者首先假设了$P$不包含$X$的信息，并且定义了causal函数$f: R^{n \times d_1} \times R^{n \times d_1} \times R^{n \times d_2} \rightarrow R^{n \times d_2}$:</p>
 <p>$$<br>F \triangleq f(X,Y,Z), where F_t = \frac{1}{t}X_t\sum_{t=1}^tY_j^TZ_j<br>$$</p>
 <p>$F \in R^{n \times d_2}$，并且$F_t$表示矩阵$F$的第t行。从$F$的定义可以看到，矩阵$F$的第t行表示了输入$X,Y,Z$第t行以及第t行以前的token的信息。</p>
-<p>有了上面的定义，可以通过如下的步骤实现causal attention。首先计算pack attention：$A_pack=\omega(\frac{PX^T}{\sqrt{d}})$(省略了$W_Q,W_K,W_V$)。在计算$A_pack$时，激活函数$\omega$不能使用softmax，因为这样在计算某个token时会使用这个token后续token的信息。因此作者借鉴了Linear Transformer的做法，将激活函数定义为$\omega(\cdot)=elu(\cdot)+1$。接着使用causal函数计算unpack attention:$A_unpack=f(X,X,A_pack^T)$，这里的激活函数可以使用softmax，因为这里的softmax是针对l进行的，而不是针对n进行的。最终的输出Y可以表示为：$Y=f(A_unpack, A_pack^T, X)$。</p>
+<p>有了上面的定义，可以通过如下的步骤实现causal attention。首先计算pack attention：$A_{pack}=\omega(\frac{PX^T}{\sqrt{d}})$(省略了$W_Q,W_K,W_V$)。在计算$A_{pack}$时，激活函数$\omega$不能使用softmax，因为这样在计算某个token时会使用这个token后续token的信息。因此作者借鉴了Linear Transformer的做法，将激活函数定义为$\omega(\cdot)=elu(\cdot)+1$。接着使用causal函数计算unpack attention:$A_{unpack}=f(X,X,A_{pack}^T)$，这里的激活函数可以使用softmax，因为这里的softmax是针对l进行的，而不是针对n进行的。最终的输出Y可以表示为：$Y=f(A_{unpack}, A_{pack}^T, X)$。</p>
 <h1 id="实验结果"><a href="#实验结果" class="headerlink" title="实验结果"></a>实验结果</h1><p>这里简单看看实验结果。主要关注长文本序列建模能力，时间消耗和模型在自然语言理解任务上的效果。</p>
 <h2 id="长文本序列建模"><a href="#长文本序列建模" class="headerlink" title="长文本序列建模"></a>长文本序列建模</h2><p>长文本序列建模在标准数据集LRA上进行。从实验效果上看，所有任务都取得了比Transformer好的效果，平均准确率也超过了所有比较的模型。</p>
 <p><img src="/2021/06/15/Luna-Linear-Unified-Nested-Attention/lra_result.png" alt="长文本建模结果比较"></p>
