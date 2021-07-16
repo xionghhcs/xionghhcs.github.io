@@ -179,7 +179,8 @@
 <p>函数$SG(\dot)$表示stop-gradient，$[h_v \circ h_v]$表示将两个hidden state沿着序列长度的维度进行拼接，$W$表示模型的参数。需要注意的是，$q_{t + 1}^n \in R^{L \times d}$，而$k_{t + 1}^n, v_{t + 1}^n \in R^{2L \times d}$，所以最终得到的$h_{t + 1}^n \in R^{L \times d}$。</p>
 <p>上面提到的就是Transformer-XL引入的片段级递归机制。另外需要注意这里引入的片段级递归机制与传统的RNN语言模型的递归有所不同。传统的RNN语言模型的递归是在同一层实现的，即当前的hidden state包含了前面所有tokens的语言信息。但是在Transformer-XL中，$h_{t + 1}^n$和$h_t^{n-1}$之间的依赖是跨层的，所以随着层数的增加，最终模型才能够“看”到更多的上下文。</p>
 <p><img src="/posts/34714856/transformerxl_yilai.png" alt="transformer-XL片段间依赖图"></p>
-<h2 id="相对位置编码"><a href="#相对位置编码" class="headerlink" title="相对位置编码"></a>相对位置编码</h2><h1 id="实验效果"><a href="#实验效果" class="headerlink" title="实验效果"></a>实验效果</h1><h1 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h1></section>
+<h2 id="相对位置编码"><a href="#相对位置编码" class="headerlink" title="相对位置编码"></a>相对位置编码</h2><p>为了能够重用hidden state，还有一个问题尚未解决。</p>
+<h1 id="实验效果"><a href="#实验效果" class="headerlink" title="实验效果"></a>实验效果</h1><h1 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h1></section>
     <!-- Tags START -->
     
       <div class="tags">
