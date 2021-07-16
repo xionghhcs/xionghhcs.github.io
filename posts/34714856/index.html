@@ -170,13 +170,14 @@
 <p>那么可以看到，在训练过程中片段和片段之间是没有交互的，这就是作者观察到的上下文碎片化问题。其次，在inference阶段，由于每次仅移动一个词，那么当序列很长的时候，inference的速度也会很慢。</p>
 <p>基于上面提到的问题，作者Transformer基础上引入片段级递归和相对位置编码，提出了Transformer-XL，使得模型可以建模较长的序列。</p>
 <h1 id="模型"><a href="#模型" class="headerlink" title="模型"></a>模型</h1><h2 id="片段级递归"><a href="#片段级递归" class="headerlink" title="片段级递归"></a>片段级递归</h2><p>作者在Transformer架构上引入了循环机制，不过相比于RNN仅保留上一个词的hidden state作为</p>
-<p>假设两个连续的长度都是L的输入片段为：$s_{ \tau }=[x_{\tau , 1},x_{\tau , 2},…,x_{\tau , L}]$和$s_{\tau + 1}=[x_{\tau + 1,1},x_{\tau + 1,2},…,x_{\tau + 1,L}]$，同时将第n层layer对第$\tau$个输入序列$s_{\tau}$计算得到的hidden state表示为$h_{\tau}^{n} \in R^{L \times d}$，其中$d$表示特征的维度。那么第n层的第$\tau + 1$个输入片段$s_{\tau + 1}$的hidden state可以通过下面的公式计算得到：</p>
-<p>$$<br>\widetilde{h}_{\tau + 1}^{n - 1} =<br>$$</p>
-<p>$$<br>q_{\tau + 1}^n, k_{\tau + 1}^n, v_{\tau + 1}^n =  h_{\tau + 1}^{n - 1}W^T,  \widetilde{h}<em>{\tau + 1}^{n - 1} W_k^T, \widetilde{h}</em>{\tau + 1}^{n - 1} W_v^T<br>$$</p>
-<p>$$<br>h_{\tau + 1}^{n} = TransformerLayer(q_{\tau + 1}^n, k_{\tau + 1}^n, v_{\tau + 1}^n)<br>$$</p>
-<p>[SG(h_{\tau}^{n-1}) \circ h_{\tau + 1}^{n - 1}]</p>
-<p>函数SG(\dot)表示stop-gradient，$[h_v \circ h_v]$表示将两个hidden state沿着序列长度的维度进行拼接，$W$表示模型的参数。需要注意的是，$q_{\tau + 1}^n \in R^{L \times d}$，而$k_{\tau + 1}^n, v_{\tau + 1}^n \in R^{2L \times d}$，所以最终得到的$h_{\tau + 1}^n \in R^{L \times d}$。</p>
-<p>上面提到的就是Transformer-XL引入的片段级递归机制。另外需要注意这里引入的片段级递归机制与传统的RNN语言模型的递归有所不同。传统的RNN语言模型的递归是在同一层实现的，即当前的hidden state包含了前面所有tokens的语言信息。但是在Transformer-XL中，$h_{\tau + 1}^n$和$h_{\tau}^n-1$之间的依赖是跨层的，所以随着层数的增加，最终模型才能够“看”到更多的上下文。</p>
+<p>假设两个连续的长度都是L的输入片段为：$s_t=[x_{t,1},x_{t,2},…,x_{t, L}]$和$s_{t + 1}=[x_{t + 1,1},x_{t + 1,2},…,x_{t + 1,L}]$，同时将第n层layer对第$t$个输入序列$s_t$计算得到的hidden state表示为$h_t^n \in R^{L \times d}$，其中$d$表示特征的维度。那么第n层的第$t + 1$个输入片段$s_{t + 1}$的hidden state可以通过下面的公式计算得到：</p>
+<p>$$<br>\widetilde h_{t + 1}^{n - 1} = [ SG( h_t^{n-1} ) \circ h_{t+1}^{n-1}]<br>$$</p>
+<p>$$<br>q_{t+1}^n = h_{t+1}^{n-1}W_q^T<br>$$</p>
+<p>$$<br>k_{t+1}^n=\widetilde h_{t+1}^{n-1}W_k^T<br>$$</p>
+<p>$$<br>v_{t+1}^n=\widetilde h_{t+1}^{n-1}W_v^T<br>$$</p>
+<p>$$<br>h_{t + 1}^{n} = TransformerLayer(q_{t + 1}^n, k_{t + 1}^n, v_{t + 1}^n)<br>$$</p>
+<p>函数$SG(\dot)$表示stop-gradient，$[h_v \circ h_v]$表示将两个hidden state沿着序列长度的维度进行拼接，$W$表示模型的参数。需要注意的是，$q_{t + 1}^n \in R^{L \times d}$，而$k_{t + 1}^n, v_{t + 1}^n \in R^{2L \times d}$，所以最终得到的$h_{t + 1}^n \in R^{L \times d}$。</p>
+<p>上面提到的就是Transformer-XL引入的片段级递归机制。另外需要注意这里引入的片段级递归机制与传统的RNN语言模型的递归有所不同。传统的RNN语言模型的递归是在同一层实现的，即当前的hidden state包含了前面所有tokens的语言信息。但是在Transformer-XL中，$h_{t + 1}^n$和$h_t^{n-1}$之间的依赖是跨层的，所以随着层数的增加，最终模型才能够“看”到更多的上下文。</p>
 <p><img src="/posts/34714856/transformerxl_yilai.png" alt="transformer-XL片段间依赖图"></p>
 <h2 id="相对位置编码"><a href="#相对位置编码" class="headerlink" title="相对位置编码"></a>相对位置编码</h2><h1 id="实验效果"><a href="#实验效果" class="headerlink" title="实验效果"></a>实验效果</h1><h1 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h1></section>
     <!-- Tags START -->
@@ -212,9 +213,9 @@
       </a>
     
     
-      <a class="nav-right" href="/posts/16269/">
+      <a class="nav-right" href="/posts/49d8fbdd/">
         
-          Synthesizer：transformer中的自注意力机制是否真的有必要？
+          Reformer
         
         <span class="nav-arrow"> →</span>
       </a>
