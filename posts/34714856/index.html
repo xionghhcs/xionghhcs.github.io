@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html>
+  <head><meta name="generator" content="Hexo 3.9.0">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="不知道的博客">
+  <meta name="keyword" content="自然语言处理, 搜索">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      Transformer-XL让模型支持长序列建模 | 熊
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-116276311-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'UA-116276311-1');
+    </script>
+
+</head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png">
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>熊</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>Transformer-XL让模型支持长序列建模</h2>
+  <p class="post-date">2021-04-10</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><blockquote>
+<p>Transformer-XL是Transformer模型的变种，主要用于解决长序列的建模问题。Transformer-XL可以看作是Transformer+RNN的结合体，不同的是Transformer-XL的递归是基于一个文本片段进行的。此外，Transformer-XL还引入了相对位置编码，以解决在Transformer中老生常谈的关于位置信息的问题。</p>
+</blockquote>
+<h1 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h1><p>Transformer模型抛弃了常用的RNN，CNN的方式完全采用自注意力的方式来对数据进行建模，这种方式</p>
+<h2 id="O-n-2-的时间空间复杂度"><a href="#O-n-2-的时间空间复杂度" class="headerlink" title="$O(n^2)$的时间空间复杂度"></a>$O(n^2)$的时间空间复杂度</h2><p>Transformer中使用的dot-product自注意力计算公式如下：</p>
+<p>$$<br>Attention(Q,K,V) = softmax(\frac{QK^T}{\sqrt{d_k}})V<br>$$</p>
+<p>其中，$Q,K,V \in R^{n \times d}$，所以$softmax(\frac{QK^T}{\sqrt{d_k}}) \in R^{n \times n}$，n是输入序列的长度。这意味着时间和空间复杂度都是$O(n^2)$，那么随着输入序列长度的增加，时间和空间的消耗都会平方级的增加。由于这个原因，Transformer难以建模很长的序列。</p>
+<h2 id="上下文碎片化问题"><a href="#上下文碎片化问题" class="headerlink" title="上下文碎片化问题"></a>上下文碎片化问题</h2><p>当然了，虽然时间和空间复杂度很高，但是在输入序列不是很长的情况下，我们依旧可以将一个很长的序列分成几段，然后一段一段的输入模型，从而实现对长序列的建模，facebook曾经就是这么搞的<a href="https://arxiv.org/pdf/1809.10853.pdf" target="_blank" rel="noopener">Al-Rfou et al(2018)</a>。这个过程可以用论文中下面这张图来说明：</p>
+<p><img src="/posts/34714856/segment_input.png" alt="片段输入示例"></p>
+<p>对于输入序列$X=[x_1, x_2, …, x_8]$一共8个词，每4个词为一段，则一共有两个segment需要输入模型。假设Transformer每次只能输入4个词，那么在训练阶段，依次将两个片段输入即可。在推理阶段，则以4个词大小的滑动窗口，从输入序列$X$中从左到右滑过，每次移动一个词的距离，并且依次将滑动窗口内的词作为输入，即可获得这个序列的输出。</p>
+<p>那么可以看到，在训练过程中片段和片段之间是没有交互的，这就是作者观察到的上下文碎片化问题。其次，在inference阶段，由于每次仅移动一个词，那么当序列很长的时候，inference的速度也会很慢。</p>
+<p>基于上面提到的问题，作者Transformer基础上引入片段级递归和相对位置编码，提出了Transformer-XL，使得模型可以建模较长的序列。</p>
+<h1 id="模型"><a href="#模型" class="headerlink" title="模型"></a>模型</h1><h2 id="片段级递归"><a href="#片段级递归" class="headerlink" title="片段级递归"></a>片段级递归</h2><p>作者在Transformer架构上引入了循环机制，不过相比于RNN仅保留上一个词的hidden state作为</p>
+<p>假设两个连续的长度都是L的输入片段为：$s_{ \tau }=[x_{\tau , 1},x_{\tau , 2},…,x_{\tau , L}]$和$s_{\tau + 1}=[x_{\tau + 1,1},x_{\tau + 1,2},…,x_{\tau + 1,L}]$，同时将第n层layer对第$\tau$个输入序列$s_{\tau}$计算得到的hidden state表示为$h_{\tau}^{n} \in R^{L \times d}$，其中$d$表示特征的维度。那么第n层的第$\tau + 1$个输入片段$s_{\tau + 1}$的hidden state可以通过下面的公式计算得到：</p>
+<p>$$<br>\widetilde{h}_{\tau + 1}^{n - 1} =<br>$$</p>
+<p>$$<br>q_{\tau + 1}^n, k_{\tau + 1}^n, v_{\tau + 1}^n =  h_{\tau + 1}^{n - 1}W^T,  \widetilde{h}<em>{\tau + 1}^{n - 1} W_k^T, \widetilde{h}</em>{\tau + 1}^{n - 1} W_v^T<br>$$</p>
+<p>$$<br>h_{\tau + 1}^{n} = TransformerLayer(q_{\tau + 1}^n, k_{\tau + 1}^n, v_{\tau + 1}^n)<br>$$</p>
+<p>[SG(h_{\tau}^{n-1}) \circ h_{\tau + 1}^{n - 1}]</p>
+<p>函数SG(\dot)表示stop-gradient，$[h_v \circ h_v]$表示将两个hidden state沿着序列长度的维度进行拼接，$W$表示模型的参数。需要注意的是，$q_{\tau + 1}^n \in R^{L \times d}$，而$k_{\tau + 1}^n, v_{\tau + 1}^n \in R^{2L \times d}$，所以最终得到的$h_{\tau + 1}^n \in R^{L \times d}$。</p>
+<p>上面提到的就是Transformer-XL引入的片段级递归机制。另外需要注意这里引入的片段级递归机制与传统的RNN语言模型的递归有所不同。传统的RNN语言模型的递归是在同一层实现的，即当前的hidden state包含了前面所有tokens的语言信息。但是在Transformer-XL中，$h_{\tau + 1}^n$和$h_{\tau}^n-1$之间的依赖是跨层的，所以随着层数的增加，最终模型才能够“看”到更多的上下文。</p>
+<p><img src="/posts/34714856/transformerxl_yilai.png" alt="transformer-XL片段间依赖图"></p>
+<h2 id="相对位置编码"><a href="#相对位置编码" class="headerlink" title="相对位置编码"></a>相对位置编码</h2><h1 id="实验效果"><a href="#实验效果" class="headerlink" title="实验效果"></a>实验效果</h1><h1 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h1></section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#paper" >
+    <span class="tag-code">paper</span>
+  </a>
+
+  <a href="/tags#TransformerXL" >
+    <span class="tag-code">TransformerXL</span>
+  </a>
+
+  <a href="/tags#语言模型" >
+    <span class="tag-code">语言模型</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/posts/57420/">
+        <span class="nav-arrow">← </span>
+        
+          spark权威指南学习笔记四
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/posts/16269/">
+        
+          Synthesizer：transformer中的自注意力机制是否真的有必要？
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- No Comment -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#问题"><span class="toc-nav-text">问题</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#O-n-2-的时间空间复杂度"><span class="toc-nav-text">$O(n^2)$的时间空间复杂度</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#上下文碎片化问题"><span class="toc-nav-text">上下文碎片化问题</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#模型"><span class="toc-nav-text">模型</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#片段级递归"><span class="toc-nav-text">片段级递归</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#相对位置编码"><span class="toc-nav-text">相对位置编码</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#实验效果"><span class="toc-nav-text">实验效果</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#结论"><span class="toc-nav-text">结论</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'https:xionghhcs.github.io/posts/34714856/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2021 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng">yanm1ng</a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+<script src="/js/script.js"></script>
+  </body>
+</html>

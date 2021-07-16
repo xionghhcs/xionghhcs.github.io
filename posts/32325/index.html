@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html>
+  <head><meta name="generator" content="Hexo 3.9.0">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="不知道的博客">
+  <meta name="keyword" content="自然语言处理, 搜索">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      spark权威指南学习笔记二 | 熊
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-116276311-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'UA-116276311-1');
+    </script>
+
+</head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png">
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>熊</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>spark权威指南学习笔记二</h2>
+  <p class="post-date">2020-04-03</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><blockquote>
+<p>该部分总结自《Spark权威指南》第三章内容，个人学习笔记。</p>
+</blockquote>
+<h1 id="Spark工具集"><a href="#Spark工具集" class="headerlink" title="Spark工具集"></a>Spark工具集</h1><p>下图是Spark工具集的概览，包括了结构化的API、低级的API，结构化流、机器学习相关的MLlib进行高级数据分析、第三方库/包等。</p>
+<p><img src="/posts/32325/spark%E5%B7%A5%E5%85%B7%E9%9B%86.png" alt></p>
+<h1 id="提交上线应用环境"><a href="#提交上线应用环境" class="headerlink" title="提交上线应用环境"></a>提交上线应用环境</h1><p>我们可以在spark提供的交互性shell环境中进行交互式编程，但是这种仅适合于进行在线数据分析。当需要开发大型项目，显然这种交互式的编程方式不太方便。这时候需要我们打包自己的spark程序，然后使用spark提供的spark-submit工具提交到集群上运行。spark-submit在spark安装目录的bin目录下，其实本身是一个shell脚本，其内容如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">if [ -z &quot;$&#123;SPARK_HOME&#125;&quot; ]; then</span><br><span class="line">source &quot;$(dirname &quot;$0&quot;)&quot;/find-spark-home</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line"># disable randomized hash for string in Python 3.3+</span><br><span class="line">export PYTHONHASHSEED=0</span><br><span class="line"></span><br><span class="line">exec &quot;$&#123;SPARK_HOME&#125;&quot;/bin/spark-class org.apache.spark.deploy.SparkSubmit &quot;$@&quot;</span><br></pre></td></tr></table></figure>
+
+<p>在上面的脚本代码中可以看到SPARK_HOME这个环境变量，这个脚本需要依赖这个环境变量定位spark的安装位置。平时我们在安装各个框架、库的时候，都或多或少会碰到需要在系统环境变量中配置某些指定的变量，其中道理就在这里。环境变量的配置一方面是定位框架安装的路径，另一方面是框架中自行开发的一些工具脚本需要依赖这些环境变量来执行，本质依旧是告诉操作系统我将框架安装在了什么地方，让系统可以找得到相关的依赖或者命令。</p>
+<p>关于如何利用spark-submit如何提交程序，有哪些相关参数，每个参数具体什么含义在需要的时候再查询。</p>
+<h1 id="类型安全的API——DataSets"><a href="#类型安全的API——DataSets" class="headerlink" title="类型安全的API——DataSets"></a>类型安全的API——DataSets</h1><p>DataSets是Spark提供的结构化且类型安全的API，但是其仅能在Java和Scala中使用。什么是类型安全？目前对类型安全的API带来的优势还没有什么实际感受。</p>
+<h1 id="结构化流处理（Structured-Streaming）"><a href="#结构化流处理（Structured-Streaming）" class="headerlink" title="结构化流处理（Structured Streaming）"></a>结构化流处理（Structured Streaming）</h1><p>Spark提供了以批处理的方式处理结构化的数据，比如DataFrame结构和Spark SQL。而所谓的结构化流，其实就是使用流处理的方式来处理结构化数据。一个简单的例子是销售记录。一份消费记录记录的用户id，消费时间，消费金额等信息。批处理在每天结束时，一次性计算每天的消费统计信息。而流处理通过实践窗口，实时计算一些统计信息，比如一个小时内每个客户的消费金额等。批处理是静态的，需要等到每天结束时，数据都不变的情况下进行整体计算。流处理是动态的，数据在不停变化，因此流处理的计算结果也在根据数据的变化而变化。</p>
+<h1 id="机器学习和高级分析"><a href="#机器学习和高级分析" class="headerlink" title="机器学习和高级分析"></a>机器学习和高级分析</h1><p>Spark提供了MLlib库以支持机器学习应用的开发，MLlib库允许进行预处理、修改、模型训练和数据的大规模预测。因此，一些分类和回归算法现在可以借助该库在集群上进行实现。为什么不在单机上进行呢？这个在之前的介绍也已经提到过，spark是为了解决单机资源不足以支撑大数据计算而产生的计算引擎。我们平时习惯了在小规模数据上编写代码，一次性将所有数据读入内存并进行模型的训练，但是在实际生产应用中数据规模十分庞大，单机是不足以处理如此大规模数据的。MLlib则是在集群进行计算，解决单机资源不足的问题。</p>
+<h1 id="低层次APIs"><a href="#低层次APIs" class="headerlink" title="低层次APIs"></a>低层次APIs</h1><p>RDD（分布式数据集）是Spark中的一种低层次的API，它向用户揭示了spark的物理执行特性（比如分区）。一般建议使用DataFrame等高级的API，而在处理一些原始或者非结构化的数据时使用RDD。</p>
+<h1 id="Spark-R"><a href="#Spark-R" class="headerlink" title="Spark R"></a>Spark R</h1><p>Spark提供对R语言的支持，目前不关心。</p>
+<h1 id="Spark生态系统和软件包"><a href="#Spark生态系统和软件包" class="headerlink" title="Spark生态系统和软件包"></a>Spark生态系统和软件包</h1><p>Spark包可以在spark-packages.org中查看相关索引。第三方开发的包可以帮助我们快速开发，避免重复造轮子。在使用python的过程中，这一点是深有体会的。</p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#spark" >
+    <span class="tag-code">spark</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/posts/6980/">
+        <span class="nav-arrow">← </span>
+        
+          spark权威指南学习笔记一
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/posts/7556/">
+        
+          spark权威指南学习笔记三
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- No Comment -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Spark工具集"><span class="toc-nav-text">Spark工具集</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#提交上线应用环境"><span class="toc-nav-text">提交上线应用环境</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#类型安全的API——DataSets"><span class="toc-nav-text">类型安全的API——DataSets</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#结构化流处理（Structured-Streaming）"><span class="toc-nav-text">结构化流处理（Structured Streaming）</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#机器学习和高级分析"><span class="toc-nav-text">机器学习和高级分析</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#低层次APIs"><span class="toc-nav-text">低层次APIs</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Spark-R"><span class="toc-nav-text">Spark R</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Spark生态系统和软件包"><span class="toc-nav-text">Spark生态系统和软件包</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'https:xionghhcs.github.io/posts/32325/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2021 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng">yanm1ng</a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+<script src="/js/script.js"></script>
+  </body>
+</html>
