@@ -169,7 +169,7 @@
 <p>对于输入序列$X=[x_1, x_2, …, x_8]$一共8个词，每4个词为一段，则一共有两个segment需要输入模型。假设Transformer每次只能输入4个词，那么在训练阶段，依次将两个片段输入即可。在推理阶段，则以4个词大小的滑动窗口，从输入序列$X$中从左到右滑过，每次移动一个词的距离，并且依次将滑动窗口内的词作为输入，即可获得这个序列的输出。</p>
 <p>那么可以看到，在训练过程中片段和片段之间是没有交互的，这就是作者观察到的上下文碎片化问题。其次，在inference阶段，由于每次仅移动一个词，那么当序列很长的时候，inference的速度也会很慢。</p>
 <p>基于上面提到的问题，作者Transformer基础上引入片段级递归和相对位置编码，提出了Transformer-XL，使得模型可以建模较长的序列。</p>
-<h1 id="模型"><a href="#模型" class="headerlink" title="模型"></a>模型</h1><h2 id="片段级递归"><a href="#片段级递归" class="headerlink" title="片段级递归"></a>片段级递归</h2><p>作者在Transformer架构上引入了循环机制，不过相比于RNN仅保留上一个词的hidden state作为</p>
+<h1 id="模型介绍"><a href="#模型介绍" class="headerlink" title="模型介绍"></a>模型介绍</h1><h2 id="片段级递归"><a href="#片段级递归" class="headerlink" title="片段级递归"></a>片段级递归</h2><p>作者在Transformer架构上引入了循环机制，不过相比于RNN仅保留上一个词的hidden state作为</p>
 <p>假设两个连续的长度都是L的输入片段为：$s_t=[x_{t,1},x_{t,2},…,x_{t, L}]$和$s_{t + 1}=[x_{t + 1,1},x_{t + 1,2},…,x_{t + 1,L}]$，同时将第n层layer对第$t$个输入序列$s_t$计算得到的hidden state表示为$h_t^n \in R^{L \times d}$，其中$d$表示特征的维度。那么第n层的第$t + 1$个输入片段$s_{t + 1}$的hidden state可以通过下面的公式计算得到：</p>
 <p>$$<br>\widetilde h_{t + 1}^{n - 1} = [ SG( h_t^{n-1} ) \circ h_{t+1}^{n-1}]<br>$$</p>
 <p>$$<br>q_{t+1}^n = h_{t+1}^{n-1}W_q^T<br>$$</p>
@@ -181,7 +181,7 @@
 <p><img src="/posts/34714856/transformerxl_yilai.png" alt="transformer-XL片段间依赖图"></p>
 <h2 id="相对位置编码"><a href="#相对位置编码" class="headerlink" title="相对位置编码"></a>相对位置编码</h2><p>为了能够重用hidden state，还有一个问题尚未解决。即位置编码的问题。Transformer使用绝对位置编码来表示每个token的位置，但是由于Transformer-XL将一个长序列分成多个片段，每个片段依次送入Transformer中，那么这样模型没有足够的信息区分不同片段的相同位置。</p>
 <p>为了解决这个问题，作者引入了相对位置编码。</p>
-<p>首先来看看在标准的Transformer中，$q_i$和$k_j$的注意力分数是如何依赖于绝对位置编码的。我们用$U \in R^{L_max \times d}$表示绝对位置编码的矩阵，其中$L_max$表示最大序列长度，$d$表示位置编码向量的维度，那么第i行就表示的是第i个位置的绝对位置向量。$q_i$和$k_j$的注意力分数就可以通过如下公式计算：</p>
+<p>首先来看看在标准的Transformer中，$q_i$和$k_j$的注意力分数是如何依赖于绝对位置编码的。我们用$U \in R^{L_{max} \times d}$表示绝对位置编码的矩阵，其中$L_{max}$表示最大序列长度，$d$表示位置编码向量的维度，那么第i行就表示的是第i个位置的绝对位置向量。$q_i$和$k_j$的注意力分数就可以通过如下公式计算：</p>
 <p>$$A_{i,j}^{abs} = E_{x_i}^T W_q^T W_k E_{x_j} + E_{x_i}^TW_q^TW_kU_j + U_i^TW_q^TW_kE_{x_j} + U_i^TW_q^TW_kU_j$$</p>
 <p>上式中等号右边四项依次记为(a),(b),(c),(d)。作者对上面基于绝对位置编码计算attention的公式做了对应的修改，以在attention计算中加入相对位置编码：</p>
 <p>$$<br>A_{i,j}^{rel} = E_{x_i}^T W_q^T W_{k,E} E_{x_j} + E_{x_i}^TW_q^T W_{k,R} R_{i-j} + u^T W_{k,E} E_{x_j} + v^T W_{k,R} R_{i-j}<br>$$</p>
@@ -252,7 +252,7 @@
   <div class="toc-main">
     <strong class="toc-title">Catalog</strong>
     
-      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#问题"><span class="toc-nav-text">问题</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#O-n-2-的时间空间复杂度"><span class="toc-nav-text">$O(n^2)$的时间空间复杂度</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#上下文碎片化问题"><span class="toc-nav-text">上下文碎片化问题</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#模型"><span class="toc-nav-text">模型</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#片段级递归"><span class="toc-nav-text">片段级递归</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#相对位置编码"><span class="toc-nav-text">相对位置编码</span></a></li></ol></li></ol>
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#问题"><span class="toc-nav-text">问题</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#O-n-2-的时间空间复杂度"><span class="toc-nav-text">$O(n^2)$的时间空间复杂度</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#上下文碎片化问题"><span class="toc-nav-text">上下文碎片化问题</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#模型介绍"><span class="toc-nav-text">模型介绍</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#片段级递归"><span class="toc-nav-text">片段级递归</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#相对位置编码"><span class="toc-nav-text">相对位置编码</span></a></li></ol></li></ol>
     
   </div>
 </aside>
