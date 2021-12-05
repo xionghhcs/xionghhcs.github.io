@@ -3,14 +3,14 @@
   <head><meta name="generator" content="Hexo 3.9.0">
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
   <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
-  <meta name="description" content="熊">
+  <meta name="description" content="真正的英雄是看清了生活的真相却依旧热爱生活的人---罗曼罗兰">
   <meta name="keyword" content="自然语言处理, 搜索">
   
     <link rel="shortcut icon" href="/css/images/logo.png">
   
   <title>
     
-      参数初始化 | 熊
+      tfidf和bm25 | 拉格朗月
     
   </title>
   <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
@@ -69,7 +69,7 @@
   <div class="header-container">
     <a class="home-link" href="/">
       <div class="logo"></div>
-      <span>熊</span>
+      <span>拉格朗月</span>
     </a>
     <ul class="right-list">
       
@@ -88,12 +88,6 @@
         <li class="list-item">
           
             <a href="/archives/" class="item-link">Archives</a>
-          
-        </li>
-      
-        <li class="list-item">
-          
-            <a href="/project/" class="item-link">Projects</a>
           
         </li>
       
@@ -132,12 +126,6 @@
         
           <li class="menu-item">
             
-              <a href="/project/" class="menu-link">Projects</a>
-            
-          </li>
-        
-          <li class="menu-item">
-            
               <a href="/about/" class="menu-link">About</a>
             
           </li>
@@ -148,8 +136,8 @@
 </header>
 
     <div id="article-banner">
-  <h2>参数初始化</h2>
-  <p class="post-date">2021-08-21</p>
+  <h2>tfidf和bm25</h2>
+  <p class="post-date">2021-12-05</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
@@ -158,9 +146,34 @@
   <!-- Article START -->
   <article class="post-article">
     <section class="markdown-content"><blockquote>
-<p>参数初始化即在模型训练之前，通过一定的方法给模型中的参数和偏置设置初始值。参数初始化方法对于深度学习模型而言至关重要，一个好的参数初始化可以让模型更好的收敛，从数据中学习到更好模型。而一个差的参数初始化方法可能会导致模型无法收敛，或者是无法得到一个好的训练结果。那么问题来了，参数初始化的原则是什么？什么是好的参数初始化方法？目前都有哪些比较主流的参数初始化方法？</p>
+<p>在最近的工作中，再次接触了bm25用来计算query和doc相关性的问题，在此记录一下bm25计算方法，备查阅。</p>
 </blockquote>
-<h1 id="参数初始化的原则"><a href="#参数初始化的原则" class="headerlink" title="参数初始化的原则"></a>参数初始化的原则</h1><h1 id="参数初始化方法"><a href="#参数初始化方法" class="headerlink" title="参数初始化方法"></a>参数初始化方法</h1></section>
+<h1 id="相关性的度量"><a href="#相关性的度量" class="headerlink" title="相关性的度量"></a>相关性的度量</h1><p>搜索引擎最重要的职能，是根据用户输入的query，将文档库中最相关的内容返回给用户，因此相关性贯穿了搜索引擎的各个阶段。为此，我们需要对相关性进行定义和量化，基于量化的数值进行排序，然后将最相关的内容返回给用户。TF-IDF和BM25就是对相关性进行量化的两种计算方法。特别是在召回阶段，由于文本量巨大，使用TF-IDF和BM25这种简单的计算方法可以快速从海量文本中初筛出相关性高的doc。</p>
+<h1 id="TF-IDF"><a href="#TF-IDF" class="headerlink" title="TF-IDF"></a>TF-IDF</h1><p>TF-IDF是由词频和逆文档词频两项组成。TF即Term Frequency，表示一个词在文档中出现的次数，通常认为一个词在一篇文档中出现的次数阅读，那么这个词越能表示这个文档的主题。其次为了考虑文档长度对词频的影响，通常会用词频除以文档的长度：</p>
+<p>$$<br>TF = \frac{词w在文档中出现的次数}{文档的长度}<br>$$</p>
+<p>IDF表示逆文档词频，其表示的物理含义为一个词在所有文档都出现过，那么这个词对于表示相关性就不那么重要，因为没有区分度。逆文档词频的计算方法：</p>
+<p>$$<br>IDF(w) = log(\frac{N}{N(w) + 1})<br>$$</p>
+<p>$N$表示文档库中的所有文档的数量，$N(w)$表示包含词w的文档的数量，$+1$是为了防止除0错误。</p>
+<p>TF-IDF最后是通过TF乘上IDF得到。</p>
+<p><em>对于一个query中有多个词，如果用TF-IDF计算，那么最终的TF-IDF值是累加还是求均值？</em></p>
+<h1 id="BM25"><a href="#BM25" class="headerlink" title="BM25"></a>BM25</h1><p>BM25可以认为是TF-IDF的改良，既然是改良，那么必然有与TF-IDF相同的地方和不同的地方。BM25的公式为：</p>
+<p>$$<br>Score(Q, d) = \sum_i^n{W_i R(q_i, d)}<br>$$</p>
+<p>其中，$W_i$表示term的权重，Q表示一个query，$q_i$表示query分词后的term，d表示一篇文档。所以，BM25表示一个term与一篇文档的相关性的加权求和。</p>
+<h2 id="权重-W-i"><a href="#权重-W-i" class="headerlink" title="权重$W_i$"></a>权重$W_i$</h2><p>权重$W_i$其实就是IDF，但是这里的IDF与上面介绍的计算方法有所不同：</p>
+<p>$$<br>W_i = log(\frac{N - df_i + 0.5}{df_i + 0.5})<br>$$</p>
+<p>N表示所有文档的数量，$df_i$表示包含$q_i$的文档量。虽然计算方法不一样，但是IDF的作用是一样的，即越多的文档包含一个term，那么这个term用来区分不同文档的作用就越小。</p>
+<h2 id="相关性"><a href="#相关性" class="headerlink" title="相关性"></a>相关性</h2><p>相关性包含两个部分：单词与query的相关性和单词与文档的相关性，也即：</p>
+<p>$$<br>R(q_i, d) = S(q_i, d) * S(q_i, Q) =<br>$$</p>
+<h3 id="单词与query的相关性"><a href="#单词与query的相关性" class="headerlink" title="单词与query的相关性"></a>单词与query的相关性</h3><p>当query很长时，可以通过下面的公式刻画单词与query之间的相关性；但是当query很短时，可以不需要此项：</p>
+<p>$$<br>S(q_i, Q) = \frac{(k_3 + 1)tf_{tq}}{k_3 + tf_{tq}}<br>$$</p>
+<p>上式中，$tf_{tq}$表示词在query中的词频，而$k_3$是一个可调节的参数。</p>
+<p>因为query一般都很短，所以不需要考虑这项，而是假设query中词频都是1。</p>
+<h3 id="单词与doc的相关性"><a href="#单词与doc的相关性" class="headerlink" title="单词与doc的相关性"></a>单词与doc的相关性</h3><p>词频与文档之间的相关性不是线性增加的，当词频达到一个阈值后，其与文档的相关性将不再线性增加，并且这个阈值与与文档本身有关。因此BM25通过下面的公式刻画单词与文档之间的相关性：</p>
+<p>$$<br>S(q_i, d) = \frac{(k_1 + 1)tf_{td}}{K + tf_{td}}<br>$$</p>
+<p>$$<br>K = k1(1 - b + b * \frac{L_d}{L_{avg}})<br>$$</p>
+<p>其中，$tf_{td}$表示单词t在文档中的词频，$L_d$表示文档的长度，$L_{avg}$表示所有文档的平均长度。变量$k_1$和$b$都是可调节的参数。$k_1$是正参数，用来标准化词频的范围，$k_1=0$时说一个二元模型，即只表示词在或没在文档中出现过。b用来控制文档长度对相关性的影响，当$b=0$时，文档长度对相关性没有影响。</p>
+<h2 id="BM25最终的公式"><a href="#BM25最终的公式" class="headerlink" title="BM25最终的公式"></a>BM25最终的公式</h2><p>$$<br>RSV_d = \sum_i^n{[log(\frac{N - ni + 0.5}{ni + 0.5})] \cdot \frac{(k_1 + 1) tf_{td}}{k1(1 - b + b * (L_d / L_{avg})) + tf_{td}} \cdot \frac{(k_2 + 1)tf_{tq}}{k_2 + tf_{tq}}}<br>$$</p>
+</section>
     <!-- Tags START -->
     
     <!-- Tags END -->
@@ -169,10 +182,10 @@
   <div class="nav-container">
     <!-- reverse left and right to put prev and next in a more logic postition -->
     
-      <a class="nav-left" href="/posts/811c7b20/">
+      <a class="nav-left" href="/posts/96d104d2/">
         <span class="nav-arrow">← </span>
         
-          topk问题
+          SimCLS一个应用了对比学习的生成式摘要框架
         
       </a>
     
@@ -197,7 +210,7 @@
   <div class="toc-main">
     <strong class="toc-title">Catalog</strong>
     
-      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#参数初始化的原则"><span class="toc-nav-text">参数初始化的原则</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#参数初始化方法"><span class="toc-nav-text">参数初始化方法</span></a></li></ol>
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#相关性的度量"><span class="toc-nav-text">相关性的度量</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#TF-IDF"><span class="toc-nav-text">TF-IDF</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#BM25"><span class="toc-nav-text">BM25</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#权重-W-i"><span class="toc-nav-text">权重$W_i$</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#相关性"><span class="toc-nav-text">相关性</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#单词与query的相关性"><span class="toc-nav-text">单词与query的相关性</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#单词与doc的相关性"><span class="toc-nav-text">单词与doc的相关性</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#BM25最终的公式"><span class="toc-nav-text">BM25最终的公式</span></a></li></ol></li></ol>
     
   </div>
 </aside>
@@ -207,7 +220,7 @@
 
 <script>
   (function () {
-    var url = 'https:xionghhcs.github.io/posts/9de7f59c/';
+    var url = 'https:xionghhcs.github.io/posts/c1c2e273/';
     var banner = ''
     if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
       $('#article-banner').css({

@@ -3,14 +3,14 @@
   <head><meta name="generator" content="Hexo 3.9.0">
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
   <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
-  <meta name="description" content="熊">
+  <meta name="description" content="真正的英雄是看清了生活的真相却依旧热爱生活的人---罗曼罗兰">
   <meta name="keyword" content="自然语言处理, 搜索">
   
     <link rel="shortcut icon" href="/css/images/logo.png">
   
   <title>
     
-      熊
+      拉格朗月
     
   </title>
   <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
@@ -69,7 +69,7 @@
   <div class="header-container">
     <a class="home-link" href="/">
       <div class="logo"></div>
-      <span>熊</span>
+      <span>拉格朗月</span>
     </a>
     <ul class="right-list">
       
@@ -88,12 +88,6 @@
         <li class="list-item">
           
             <a href="/archives/" class="item-link">Archives</a>
-          
-        </li>
-      
-        <li class="list-item">
-          
-            <a href="/project/" class="item-link">Projects</a>
           
         </li>
       
@@ -132,12 +126,6 @@
         
           <li class="menu-item">
             
-              <a href="/project/" class="menu-link">Projects</a>
-            
-          </li>
-        
-          <li class="menu-item">
-            
               <a href="/about/" class="menu-link">About</a>
             
           </li>
@@ -151,41 +139,19 @@
   
     <article class="article-card">
       <h2 class="article-head">
-        <a href="/posts/9de7f59c/">参数初始化</a>
+        <a href="/posts/c1c2e273/">tfidf和bm25</a>
       </h2>
-      <p class="article-date">2021年8月21日</p>
+      <p class="article-date">2021年12月5日</p>
       
       <div class="article-summary">
         
           
-参数初始化即在模型训练之前，通过一定的方法给模型中的参数和偏置设置初始值。参数初始化方法对于深度学习模型而言至关重要，一个好的参数初始化可以让模型更好的收敛，从数据中学习到更好模型。而一个差的参数初始化方法可能会导致模型无法收敛，或者是无法得到一个好的训练结果。那么问题来了，参数初始化的原 ...
+在最近的工作中，再次接触了bm25用来计算query和doc相关性的问题，在此记录一下bm25计算方法，备查阅。
+
+相关性的度量搜索引擎最重要的职能，是根据用户输入的query，将文档库中最相关的内容返回给用户，因此相关性贯穿了搜索引擎的各个阶段。为此，我们需要对相关性进行定义和量化，基于 ...
         
       </div>
-      <a class="more" href="/posts/9de7f59c/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/posts/811c7b20/">topk问题</a>
-      </h2>
-      <p class="article-date">2021年8月8日</p>
-      
-        
-  <a href="/tags#leetcode" >
-    <span class="tag-code">leetcode</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          
-面试中常见的topk问题，在这里总结和梳理一下相关的方法和题目。
-
-问题描述topk问题是常见的问题，后面涉及不少基础的算法和数据结构，如排序，二分查找，堆，优先队列等。topk问题通常包含这样的字眼“最大的k个”，“最小的k个”，“第k个最大/最小值”等。
-虽然各个问题可以套壳上不同的背 ...
-        
-      </div>
-      <a class="more" href="/posts/811c7b20/">Read more</a>
+      <a class="more" href="/posts/c1c2e273/">Read more</a>
     </article>
   
     <article class="article-card">
@@ -319,12 +285,12 @@ Transformer的时间和空间复杂度都是和输入句子长度的平方，这
       <p class="article-date">2021年5月26日</p>
       
         
-  <a href="/tags#NLP" >
-    <span class="tag-code">NLP</span>
-  </a>
-
   <a href="/tags#paper" >
     <span class="tag-code">paper</span>
+  </a>
+
+  <a href="/tags#NLP" >
+    <span class="tag-code">NLP</span>
   </a>
 
   <a href="/tags#Transformer" >
@@ -415,6 +381,30 @@ Transformer-XL是Transformer模型的变种，主要用于解决长序列的建�
         
       </div>
       <a class="more" href="/posts/57420/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/posts/7556/">spark权威指南学习笔记三</a>
+      </h2>
+      <p class="article-date">2020年4月4日</p>
+      
+        
+  <a href="/tags#spark" >
+    <span class="tag-code">spark</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          
+该部分总结自《Spark权威指南》第四章内容，个人学习笔记和记录。
+
+结构化API在前面的章节中已经有介绍结构化API，spark中的结构化集合主要有DataFrame和DataSet两种。他们的抽象逻辑就像excel表格一样，由行和列组成列表数据。
+模式模式（Schemas）定义Data ...
+        
+      </div>
+      <a class="more" href="/posts/7556/">Read more</a>
     </article>
   
 
