@@ -163,7 +163,7 @@
 <p>$$<br>W_i = log(\frac{N - df_i + 0.5}{df_i + 0.5})<br>$$</p>
 <p>N表示所有文档的数量，$df_i$表示包含$q_i$的文档量。虽然计算方法不一样，但是IDF的作用是一样的，即越多的文档包含一个term，那么这个term用来区分不同文档的作用就越小。</p>
 <h2 id="相关性"><a href="#相关性" class="headerlink" title="相关性"></a>相关性</h2><p>相关性包含两个部分：单词与query的相关性和单词与文档的相关性，也即：</p>
-<p>$$<br>R(q_i, d) = S(q_i, d) * S(q_i, Q) =<br>$$</p>
+<p>$$<br>R(q_i, d) = S(q_i, d) * S(q_i, Q)<br>$$</p>
 <h3 id="单词与query的相关性"><a href="#单词与query的相关性" class="headerlink" title="单词与query的相关性"></a>单词与query的相关性</h3><p>当query很长时，可以通过下面的公式刻画单词与query之间的相关性；但是当query很短时，可以不需要此项：</p>
 <p>$$<br>S(q_i, Q) = \frac{(k_3 + 1)tf_{tq}}{k_3 + tf_{tq}}<br>$$</p>
 <p>上式中，$tf_{tq}$表示词在query中的词频，而$k_3$是一个可调节的参数。</p>
@@ -205,7 +205,7 @@
     
       <a class="nav-right" href="/posts/ba23bdb7/">
         
-          心情
+          古文
         
         <span class="nav-arrow"> →</span>
       </a>
