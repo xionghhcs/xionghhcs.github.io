@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html>
+  <head><meta name="generator" content="Hexo 3.9.0">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="真正的英雄是看清了生活的真相却依旧热爱生活的人---罗曼罗兰">
+  <meta name="keyword" content="自然语言处理, 搜索">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      CTR预估系列(一)---WDL | 拉格朗月
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-116276311-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'UA-116276311-1');
+    </script>
+
+</head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png">
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>拉格朗月</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>CTR预估系列(一)---WDL</h2>
+  <p class="post-date">2021-12-11</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><blockquote>
+<p>最近由于各种原因，工作重心迁移到了CTR预估上来了。由于之前并没有对CTR预估有很多的了解和实践，那么借助这次机会，好好学习一下CTR预估相关的内容。主要的学习目标包括了解整个CTR预估的发展变迁；其次了解一些经典的、前沿的CTR预估模型，应用到当前项目当中；最后是通过同行的开源博客了解行业在CTR预估这件事情上的做法。</p>
+</blockquote>
+<h1 id="论文"><a href="#论文" class="headerlink" title="论文"></a>论文</h1><p><a href="http://xxx.itp.ac.cn/pdf/1606.07792.pdf" target="_blank" rel="noopener">http://xxx.itp.ac.cn/pdf/1606.07792.pdf</a></p>
+<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>WDL(Wide &amp; Deep Learning for Recommender Systems)是谷歌在2016年提出的一个经典的推荐模型。虽然该模型已经提出了很长时间，但是一直到现在也依旧是一个较强的baseline，甚至在一些推荐项目初期，也会优先选择这样一个模型作为基线快速上线和迭代。</p>
+<p>WDL，也叫Wide &amp; Deep，从名字也可以看出来主要由两个部分构成，即Wide侧和Deep侧。两个模块的设计分别为了解决不同的问题。Wide侧更注重记忆，而Deep侧更注重泛化。（这里怎么理解其中的记忆和泛化）。</p>
+<h1 id="模型结构"><a href="#模型结构" class="headerlink" title="模型结构"></a>模型结构</h1><p>Wide&amp;Deep的整体模型结构如下图所示：</p>
+<p><img src="/posts/3599af6f/model.png" alt></p>
+<p>可以看到，左侧是一个简单的线性回归，右侧则是NN模型，一个简单的前馈神经网络，而两者进行结合就是中间的Wide&amp;Deep模型。</p>
+<h2 id="Wide组件"><a href="#Wide组件" class="headerlink" title="Wide组件"></a>Wide组件</h2><p>Wide其实就是一个线性回归：</p>
+<p>$$</p>
+<p>y = W^T X + b</p>
+<p>$$</p>
+<p>其中$y$表示线性回归的输出，$W=[w_1,w_2,…,w_d]$表示参数，$X=[x_1, x_2, …, x_d]$表示特征向量，$b$是一个偏置项。</p>
+<p>特征向量中的特征除了原始的特征外，还有经过转换的特征。比如一种最重要的转换特征是交叉特征，即通过两个特征进行交叉得到一个新的特征。交叉特征的引入在线性模型中增加了非线性因素，增加了特征的表达能力。但是这种交叉需要人工进行设计，需要耗费大量时间进行特征工程，为此后续产生了很多自动进行特征交叉的模型。</p>
+<h2 id="Deep组件"><a href="#Deep组件" class="headerlink" title="Deep组件"></a>Deep组件</h2><p>Deep侧是一个简单的前馈神经网络，可以用如下公式表示：</p>
+<p>$$<br>a^{(l+1)} = f(W^{(l)}a^{(l)} + b^{(l)})<br>$$</p>
+<p>在Deep侧的特征处理中，对于一些稀疏的、高维的特征比如：性别、地域、学历等，可以使用类似自然语言处理的方式，将他们embed成一个低维向量，然后送到模型中进行训练。这个向量可以想办法预训练、也可以随机初始化。</p>
+<h2 id="联合训练"><a href="#联合训练" class="headerlink" title="联合训练"></a>联合训练</h2><p>网络有两个独立的部分，那么怎么将两者联合起来训练呢？wide&amp;deep将两个模型的输出加权相加后，通过一个公共的logistic loss进行训练。可用如下的公式进行表示：</p>
+<p>$$<br>P(Y=1|X) = \sigma( W^{T}<em>{wide} [X, \phi(X)] + W</em>{deep}^{T} a^{l_f} + b )<br>$$</p>
+<p>其中Y表示二分类类目标签，在搜索或推荐中可以表示点或者不点，在应用商店中可以表示安装或者没安装等。$\sigma(\cdot)$表示sigmoid函数，$\phi(X)$表示基于原始特征产生的交叉特征，$W_{wide}$表示线性模型参数，$W_{deep}$表示deep最后一个激活项的参数。</p>
+<h1 id="特征处理"><a href="#特征处理" class="headerlink" title="特征处理"></a>特征处理</h1><p>自然语言处理的任务大多都是切词，通过embedding lookup将词embed成向量，然后模型针对向量进行一系列的操作，最后得到最终的输出。而对于排序模型而言，通常有整型特征和浮点型的特征，如何将这些特征进行处理并输出模型中也是我较为关心的一个问题。</p>
+<h1 id="思考总结"><a href="#思考总结" class="headerlink" title="思考总结"></a>思考总结</h1><p>论文中多次强调了记忆和泛化对于推荐系统的重要性，而wide&amp;deep也是对应的解决这两个问题。wide侧的线性回归解决记忆问题，可以有效的记住稀疏的交叉特征。deep侧则是通过低维向量泛化之间没有见过的一些交互特征。</p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#CTR预估" >
+    <span class="tag-code">CTR预估</span>
+  </a>
+
+  <a href="/tags#推荐系统" >
+    <span class="tag-code">推荐系统</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/posts/33247ac/">
+        <span class="nav-arrow">← </span>
+        
+          2021年年末回顾
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/posts/e9220303/">
+        
+          CTR预估系列(二)---AutoInt
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- No Comment -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#论文"><span class="toc-nav-text">论文</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#前言"><span class="toc-nav-text">前言</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#模型结构"><span class="toc-nav-text">模型结构</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Wide组件"><span class="toc-nav-text">Wide组件</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Deep组件"><span class="toc-nav-text">Deep组件</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#联合训练"><span class="toc-nav-text">联合训练</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#特征处理"><span class="toc-nav-text">特征处理</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#思考总结"><span class="toc-nav-text">思考总结</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'https:xionghhcs.github.io/posts/3599af6f/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2021 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng">yanm1ng</a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+<script src="/js/script.js"></script>
+  </body>
+</html>
